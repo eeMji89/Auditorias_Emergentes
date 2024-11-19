@@ -8,15 +8,44 @@ const ContactForm = () => {
     message: "",
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Add your API call or email handling logic here
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("https://api.example.com/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit the form.");
+      }
+
+      setSubmitSuccess(true);
+      setFormData({
+        name: "",
+        surname: "",
+        email: "",
+        message: "",
+      });
+    } catch (error) {
+      setSubmitError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -25,7 +54,6 @@ const ContactForm = () => {
         <h2 className="text-3xl font-bold text-center mb-8">Contáctanos</h2>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-            {/* Name */}
             <div>
               <label className="block text-sm font-bold mb-2" htmlFor="name">
                 Name
@@ -41,7 +69,6 @@ const ContactForm = () => {
                 required
               />
             </div>
-            {/* Surname */}
             <div>
               <label className="block text-sm font-bold mb-2" htmlFor="surname">
                 Surname
@@ -58,8 +85,6 @@ const ContactForm = () => {
               />
             </div>
           </div>
-
-          {/* Email */}
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2" htmlFor="email">
               Email
@@ -75,8 +100,6 @@ const ContactForm = () => {
               required
             />
           </div>
-
-          {/* Message */}
           <div className="mb-6">
             <label className="block text-sm font-bold mb-2" htmlFor="message">
               Message
@@ -92,13 +115,16 @@ const ContactForm = () => {
               required
             ></textarea>
           </div>
-
-          {/* Submit Button */}
+          {submitError && <div className="text-red-500 mb-4">{submitError}</div>}
+          {submitSuccess && (
+            <div className="text-green-500 mb-4">Message sent successfully!</div>
+          )}
           <button
             type="submit"
             className="w-full bg-green-500 text-white font-bold py-3 rounded hover:bg-green-600 transition duration-200"
+            disabled={isSubmitting}
           >
-            Submit
+            {isSubmitting ? "Submitting..." : "Submit"}
           </button>
         </form>
       </div>
