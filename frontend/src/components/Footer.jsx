@@ -21,7 +21,7 @@ const MyFooter = () => {
               <span>NEXCENT</span>
             </a>
             <div className="my-8">
-              <p className="mb-1"> Copyright © 2020 Nexcent ltd.</p>
+              <p className="mb-1"> Copyright © 2020 ETHICHAIN ltd.</p>
               <p>All rights reserved</p>
             </div>
 

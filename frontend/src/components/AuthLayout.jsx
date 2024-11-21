@@ -11,10 +11,10 @@ const AuthLayout = ({ children }) => {
   const isRegisterPage = location.pathname === "/register";
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-brandPrimary to-tertiary">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-brandPrimary to-tertiary ">
       {/* Header */}
-      <header className="bg-white text-center py-4 shadow-md">
-        <div className="flex justify-between items-center px-8">
+      <header className="bg-white text-center py-4 shadow-md ">
+        <div className="flex justify-between gap-4 items-center px-8 xs:px-2 ">
           {/* Return Button */}
           <button
             onClick={() => navigate("/")}
@@ -24,7 +24,7 @@ const AuthLayout = ({ children }) => {
           </button>
 
           {/* Logo */}
-          <h1 className="text-xl font-bold">Nexcent</h1>
+          <h1 className="text-xl font-bold">ETHICHAIN</h1>
 
           {/* Conditional Buttons */}
           <div>
@@ -49,11 +49,13 @@ const AuthLayout = ({ children }) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow flex items-center justify-center">{children}</main>
+      <main className="flex-grow flex items-center justify-center p-4">
+        {children}
+        </main>
 
       {/* Footer */}
       <footer className="bg-gray-800 text-gray-400 text-center py-4">
-        <p>&copy; 2024 Nexcent. All rights reserved.</p>
+        <p>&copy; 2024 EthicChain. All rights reserved.</p>
         <div className="mt-2 space-x-4">
           <a href="/privacy" className="hover:text-white">
             Privacy Policy

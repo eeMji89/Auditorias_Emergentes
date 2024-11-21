@@ -49,7 +49,7 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="bg-gray-100 py-16 px-4">
+    <section id= "contacto" className="bg-gray-100 py-16 px-4">
       <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8">
         <h2 className="text-3xl font-bold text-center mb-8">Contáctanos</h2>
         <form onSubmit={handleSubmit}>

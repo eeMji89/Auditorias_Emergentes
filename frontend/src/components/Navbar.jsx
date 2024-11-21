@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
+import logo from '../assets/logo.png'
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-scroll";
-import logo from "../assets/logo.png";
+
+// import icons from react icons
 import { FaXmark, FaBars } from "react-icons/fa6";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
-  const [user, setUser] = useState(null); // To store user info
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -15,73 +18,72 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsSticky(window.scrollY > 100);
-      setIsMenuOpen(false);
+      if (window.scrollY > 100) setIsMenuOpen(false);
     };
 
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("https://api.example.com/user");
-        const userData = await response.json();
-        setUser(userData);
-      } catch (err) {
-        console.error("Failed to fetch user data:", err);
-      }
-    };
-
-    fetchUser();
     window.addEventListener("scroll", handleScroll);
-
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navItems = [
-    { link: "Inicio", path: "inicio" },
-    { link: "Servicio", path: "servicio" },
-    { link: "Nuestros Clientes", path: "clientes" },
-    { link: "Contactanos", path: "producto" },
-    { link: "FAQ", path: "faq" },
+    {link: "Inicio", path: "inicio" },
+    {link: "Servicio", path: "servicio" },
+    {link: "Nuestros Clientes", path: "clientes" },
+    {link: "Contactanos", path: "producto" },
+    {link: "FAQ", path: "faq" },
   ];
-
   return (
-    <header className={`bg-white fixed top-0 left-0 right-0 ${isSticky && "shadow-md"}`}>
-      <nav className="py-4 px-8 flex justify-between items-center">
-        <a href="/" className="flex items-center">
-          <img src={logo} alt="Logo" className="w-10" />
-          <span className="ml-2 text-2xl font-bold">NEXCENT</span>
-        </a>
-        <ul className="hidden md:flex space-x-8">
-          {navItems.map(({ link, path }) => (
-            <Link
-              to={path}
-              spy={true}
-              smooth={true}
-              offset={-100}
-              key={link}
-              className="hover:text-green-600"
+    <header className=" bg-white md:bg-transparent fixed top-0 left-0 right-0">
+      <nav className={`py-4 lg:px-14 px-4 ${
+          isSticky ? "sticky top-0 right-0 left-0 border bg-white transition-all duration-300" : ""
+        }`}>
+        <div className="flex justify-between items-center text-base gap-8">
+          <a href="/" className="text-2xl font-semibold flex items-center space-x-3"><img src={logo} alt="" className="w-10 inline-block items-center"/><span>ETHICHAIN</span></a>
+
+          <ul className="md:flex space-x-12 hidden">
+            
+            {
+                navItems.map(({link, path}) => <Link to={path} spy={true} smooth={true} offset={-100} key={link} href={path} className="block text-base text-gray900 hover:text-brandPrimary first:font-medium">
+                {link}
+              </Link> )
+            }
+          </ul>
+
+          <div className="space-x-12 hidden lg:flex items-center">
+            <a href="/login" className="hidden lg:flex items-center text-brandPrimary hover:text-gray900">Inicio de Sesión</a>
+            <button onClick={() => navigate("/register")} className="bg-brandPrimary text-white  py-2 px-4 transition-all duration-300 rounded hover:bg-neutralDGrey">Registrarse</button>
+          </div>
+
+          {/* menu btn, visible on mobile screen */}
+          <div className="md:hidden">
+            <button
+              onClick={toggleMenu}
+              className="text-gray900 focus:outline-none focus:text-gray-500"
             >
-              {link}
-            </Link>
-          ))}
-        </ul>
-        <div className="hidden md:flex items-center space-x-4">
-          <span>{user ? `Hello, ${user.name}` : "Guest"}</span>
-          <a href="/login" className="text-green-500 hover:underline">
-            Login
-          </a>
+              {isMenuOpen ? (
+                <FaXmark  className="h-6 w-6 text-primary"/>
+              ) : (
+                <FaBars className="h-6 w-6 text-primary" />
+              )}
+            </button>
+          </div>
         </div>
-        <button onClick={toggleMenu} className="md:hidden">
-          {isMenuOpen ? <FaXmark /> : <FaBars />}
-        </button>
+
+        <div
+        className={`space-y-4 px-4 mt-16 py-7 bg-brandPrimary ${isMenuOpen ? "block fixed top-0 right-0 left-0" : "hidden"}`}
+      >
+        {
+                navItems.map(({link, path}) => <Link 
+                to={path} spy={true} smooth={true} offset={-90}
+                key={link} 
+                onClick={toggleMenu}
+                className="block  text-white hover:text-gray-500"
+                >
+                {link}
+              </Link> )
+            }
+      </div>
       </nav>
-      {isMenuOpen && (
-        <div className="bg-gray-100 p-4">
-          {navItems.map(({ link, path }) => (
-            <Link key={link} to={path} spy={true} smooth={true} offset={-100}>
-              {link}
-            </Link>
-          ))}
-        </div>
-      )}
     </header>
   );
 };
