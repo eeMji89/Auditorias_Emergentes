@@ -1,7 +1,7 @@
 import React from "react";
 import { Footer, Label, TextInput } from "flowbite-react";
 import { SiMinutemailer } from "react-icons/si";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 
 const MyFooter = () => {
   return (

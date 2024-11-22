@@ -16,6 +16,7 @@ export default {
         "gray900": "#18191F",
         "neutralBlack": "#263238",
         "tertiary": "#F2F2F7",
+        "shadeS5": "#103E13",
       }
     },
   },

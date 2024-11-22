@@ -1,8 +1,8 @@
-import Navbar from "../components/Navbar";
-import Inicio from "../components/Inicio";
-import Servicios from "../components/Servicios";
-import ContactForm from '../components/ContactForm';
-import Footer from '../components/Footer';
+import Navbar from "../components/landing/Navbar";
+import Inicio from "../components/landing/Inicio";
+import Servicios from "../components/landing/Servicios";
+import ContactForm from '../components/landing/ContactForm';
+import Footer from '../components/landing/Footer';
 function LandingPage() {
 
   return (

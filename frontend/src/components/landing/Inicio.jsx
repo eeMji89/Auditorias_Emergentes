@@ -1,4 +1,4 @@
-import banner from "../assets/banner.png"
+import banner from "../../assets/banner.png"
 import { useNavigate } from "react-router-dom";
 const Home = () => {
   const navigate = useNavigate();
