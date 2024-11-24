@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const RegisterComplete = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     usuario: "",
     password: "",
@@ -35,7 +37,8 @@ const RegisterComplete = () => {
     setTimeout(() => {
       console.log("Complete Registration Data:", formData);
       setIsSubmitting(false);
-      // Navigate or provide success feedback
+      // Redirect to login page
+      navigate("/login");
     }, 2000);
   };
 
@@ -44,7 +47,7 @@ const RegisterComplete = () => {
       <h1 className="text-2xl md:text-3xl font-bold mb-8 text-center">
         Datos de Inicio de Sesión
       </h1>
-      <form className="bg-white p-4 rounded  max-w-md w-full">
+      <form className="bg-white p-4 rounded  max-w-md  w-full">
         {error && (
           <div className="mb-4 text-red-500 text-sm font-medium">
             {error}

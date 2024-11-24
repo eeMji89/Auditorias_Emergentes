@@ -49,7 +49,7 @@ const AuthLayout = ({ children }) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow flex items-center justify-center p-4">
+      <main className="flex-grow flex items-center justify-center p-4 ">
         {children}
         </main>
 
