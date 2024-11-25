@@ -6,10 +6,10 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS public."AUDITOR"
 (
     "ID_Auditor" bigint NOT NULL,
-    "Nombre_Auditor" "char" NOT NULL,
+    "Nombre_Auditor" text COLLATE pg_catalog."default" NOT NULL,
     "Telefono_Auditor" bigint NOT NULL,
-    "Especializacion" "char" NOT NULL,
-    "Certificaciones" "char" NOT NULL,
+    "Especializacion" text COLLATE pg_catalog."default" NOT NULL,
+    "Certificaciones" text COLLATE pg_catalog."default" NOT NULL,
     "ID_Usuario" bigint NOT NULL,
     CONSTRAINT "AUDITOR_pkey" PRIMARY KEY ("ID_Auditor")
 );
@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS public."AUDITORIA"
     "ID_Empresa" bigint NOT NULL,
     "ID_Auditor" bigint NOT NULL,
     "Fecha" date NOT NULL,
-    "Estatus" "char" NOT NULL,
-    "Descripcion" "char" NOT NULL,
+    "Estatus" text COLLATE pg_catalog."default" NOT NULL,
+    "Descripcion" text COLLATE pg_catalog."default" NOT NULL,
     "Salario" money NOT NULL,
     "Horas_Extra" smallint NOT NULL,
     "Seguro" boolean NOT NULL,
@@ -36,19 +36,19 @@ CREATE TABLE IF NOT EXISTS public."CONTRATO"
     "ID_Contrato" bigint NOT NULL,
     "ID_Auditoria" bigint NOT NULL,
     "Fecha" date NOT NULL,
-    "Validacion" "char" NOT NULL,
+    "Validacion" text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "CONTRATO_pkey" PRIMARY KEY ("ID_Contrato")
 );
 
 CREATE TABLE IF NOT EXISTS public."EMPRESA"
 (
     "ID_Empresa" bigint NOT NULL,
-    "Nombre_Empresa" "char" NOT NULL,
-    "Tipo" "char" NOT NULL,
+    "Nombre_Empresa" text COLLATE pg_catalog."default" NOT NULL,
+    "Tipo" text COLLATE pg_catalog."default" NOT NULL,
     "No_Registro" smallint NOT NULL,
-    "Ubicacion" "char" NOT NULL,
-    "Nombre_Representante" "char" NOT NULL,
-    "Cargo_Representante" "char" NOT NULL,
+    "Ubicacion" text COLLATE pg_catalog."default" NOT NULL,
+    "Nombre_Representante" text COLLATE pg_catalog."default" NOT NULL,
+    "Cargo_Representante" text COLLATE pg_catalog."default" NOT NULL,
     "ID_Usuario" bigint NOT NULL,
     CONSTRAINT "EMPRESA_pkey" PRIMARY KEY ("ID_Empresa")
 );
@@ -66,12 +66,12 @@ CREATE TABLE IF NOT EXISTS public."SOLICITUD"
 CREATE TABLE IF NOT EXISTS public."USUARIO"
 (
     "ID_Usuario" bigint NOT NULL,
-    "Nombre_Usuario" "char" NOT NULL,
-    "Contraseña" "char" NOT NULL,
-    "Rol" "char" NOT NULL,
-    "Pais" "char" NOT NULL,
+    "Nombre_Usuario" text COLLATE pg_catalog."default" NOT NULL,
+    "Contraseña" text COLLATE pg_catalog."default" NOT NULL,
+    "Rol" text COLLATE pg_catalog."default" NOT NULL,
+    "Pais" text COLLATE pg_catalog."default" NOT NULL,
     "Telefono" bigint NOT NULL,
-    "Correo_Electronico" "char" NOT NULL,
+    "Correo_Electronico" text COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT "USUARIO_pkey" PRIMARY KEY ("ID_Usuario")
 );
 
