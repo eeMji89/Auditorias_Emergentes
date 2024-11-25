@@ -68,14 +68,16 @@ const RegisterForm = ({ entityType, onSubmit }) => {
   };
 
   const handleSubmit = () => {
-    const hasErrors = Object.keys(formData).some(
+    const hasErrors = Object.keys(requiredFields[entityType]).some(
       (key) => !validateField(key, formData[key])
     );
-    if (!hasErrors && certifications) {
-      console.log("Form Data:", { ...formData, certifications });
-      onSubmit({ ...formData, certifications }); // Pass data to the parent component
+  
+    if (!hasErrors) {
+      console.log("Form Data:", formData);
+      onSubmit(formData); // Send mapped data to parent
     }
   };
+  
 
   return (   
       <div className="h-screen flex  flex-col w-full items-center justify-center bg-white rounded-lg">
