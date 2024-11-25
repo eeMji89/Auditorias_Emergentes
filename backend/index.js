@@ -5,6 +5,15 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 require("dotenv").config();
 
+console.log("Database Config:");
+console.log({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+});
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -23,7 +32,7 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  port: process.env.DB_PORT || 5432,
 });
 
 // Default Route
@@ -106,6 +115,43 @@ app.post("/register", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Login Route
+app.post("/login", async (req, res) => {
+  const { Nombre_Usuario, Contraseña } = req.body;
+
+  try {
+    // Check if the user exists
+    const userResult = await pool.query(
+      `SELECT * FROM public."USUARIO" WHERE "Nombre_Usuario" = $1`,
+      [Nombre_Usuario]
+    );
+
+    if (userResult.rows.length === 0) {
+      return res.status(401).json({ error: "Usuario no encontrado" });
+    }
+
+    const user = userResult.rows[0];
+
+    // Compare the password with the hashed password in the database
+    const isMatch = await bcrypt.compare(Contraseña, user.Contraseña);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Contraseña incorrecta" });
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: user.ID_Usuario, role: user.Rol },
+      process.env.JWT_SECRET || "default_secret", // Replace with your secret
+      { expiresIn: "1h" }
+    );
+
+    res.status(200).json({ token, message: "Inicio de sesión exitoso" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error del servidor" });
   }
 });
 

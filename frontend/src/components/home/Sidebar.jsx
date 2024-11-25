@@ -16,8 +16,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobileOpen,toggleMobileSidebar }) =>
     {
       title: "Profile",
       items: [
-        { label: "Edit Profile", icon: <FaUser />, link: "/home" },
-        { label: "Language", icon: <FaGlobe />, link: "/home" },
+        { label: "Profile", icon: <FaUser />, link: "/home" },       
         { label: "Notifications", icon: <FaBell />, link: "/home" },
       ],
     },
@@ -25,7 +24,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobileOpen,toggleMobileSidebar }) =>
       title: "Auditorías",
       items: [
         { label: "Auditorías", icon: <FaFileAlt />, link: "/home/auditorias", active: true },
-        { label: "Solicitudes", icon: <FaKey />, link: "/home" },
+        { label: "Solicitudes", icon: <FaKey />, link: "/home/solicitudes" },
       ],
     },
     {
@@ -51,18 +50,15 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobileOpen,toggleMobileSidebar }) =>
       {/* Sidebar */}
       <div
         className={`fixed z-50 bg-gray-100 shadow-lg transform transition-transform duration-300 ${
-          isMobileOpen ? "translate-x-0 " : "-translate-x-full mt-12"
+          isMobileOpen ? "translate-x-0 " : "-translate-x-full"
         } lg:translate-x-0 lg:static flex flex-col min-h-screen  ${
-          isOpen ? "w-64" : "w-20"
-        }`}
-      >
+          isOpen ? "w-64" : "w-20" }`}>
         {/* Sidebar Header */}
         <div
           className={`flex items-center px-4 ${
             isOpen ? "py-3" : "py-2"
           } bg-white shadow cursor-pointer`}
-          onClick={toggleSidebar}
-        >
+          onClick={toggleSidebar} >
           <div className="flex gap-4 justify-center items-center">
             <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center">
               A
@@ -88,9 +84,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobileOpen,toggleMobileSidebar }) =>
                       className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm ${
                         active
                           ? "bg-green-100 text-green-600 border border-green-500"
-                          : "text-gray-700 hover:bg-gray-200"
-                      }`}
-                    >
+                          : "text-gray-700 hover:bg-gray-200" }`} >
                       <span className="text-xl">{icon}</span>
                       {isOpen && <span>{label}</span>}
                     </a>

@@ -1,5 +1,15 @@
 import React from "react";
 import aboutImg from "../../assets/about.png";
+import company1 from "../../assets/icons/company1.png";
+import company2 from "../../assets/icons/company2.png";
+import company3 from "../../assets/icons/company3.png";
+import company4 from "../../assets/icons/company4.png";
+import company5 from "../../assets/icons/company5.png";
+import company6 from "../../assets/icons/company6.png";
+import company7 from "../../assets/icons/company7.png";
+import membership from "../../assets/icons/membership.png";
+import association from "../../assets/icons/association.png";
+import groupclub from "../../assets/icons/group-club.png";
 // motion
 
 
@@ -10,21 +20,21 @@ const Servicios = () => {
       title: "Fabricants de Ropa",
       decription:
         "Nuestra plataforma permite a los fabricantes de ropa asegurar condiciones laborales éticas y rastrear la trazabilidad de sus productos.",
-      image: "/src/assets/icons/membership.png",
+      image: membership,
     },
     {
       id: 2,
       title: "Empresas de Manufactura",
       decription:
         "La plataforma ayuda a las empresas de manufactura a cumplir con normativas laborales y mejorar la transparencia en su cadena de suministro",
-      image: "./src/assets/icons/association.png",
+      image: association,
     },
     {
       id: 3,
       title: "Proveedores de Insumos",
       decription:
         "Los proveedores pueden demostrar su compromiso con prácticas responsables y colaborar en una cadena de suministro ética.",
-      image: "/src/assets/icons/group-club.png",
+      image: groupclub,
     },
   ];
   return (
@@ -37,13 +47,13 @@ const Servicios = () => {
            Empresas que Confían en Nosotros
         </p>
         <div className="my-12 flex flex-wrap justify-between items-center gap-8 ">
-          <img src="src/assets/icons/company1.png" alt="" />
-          <img src="src/assets/icons/company2.png" alt="" />
-          <img src="src/assets/icons/company3.png" alt="" />
-          <img src="src/assets/icons/company4.png" alt="" />
-          <img src="src/assets/icons/company5.png" alt="" />
-          <img src="src/assets/icons/company6.png" alt="" />
-          <img src="src/assets/icons/company7.png" alt="" />
+          <img src={company1} alt ="" />
+          <img src={company2} alt="" />
+          <img src={company3} alt="" />
+          <img src={company4} alt="" />
+          <img src={company5} alt="" />
+          <img src={company6} alt="" />
+          <img src={company7} alt="" />
         </div>
      
 

@@ -56,7 +56,7 @@ const ContactForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
             <div>
               <label className="block text-sm font-bold mb-2" htmlFor="name">
-                Name
+                Nombre
               </label>
               <input
                 type="text"
@@ -65,13 +65,13 @@ const ContactForm = () => {
                 value={formData.name}
                 onChange={handleChange}
                 className="w-full p-3 border rounded"
-                placeholder="Enter your name"
+                placeholder="Ingrese su nombre"
                 required
               />
             </div>
             <div>
               <label className="block text-sm font-bold mb-2" htmlFor="surname">
-                Surname
+                Apellido
               </label>
               <input
                 type="text"
@@ -80,14 +80,14 @@ const ContactForm = () => {
                 value={formData.surname}
                 onChange={handleChange}
                 className="w-full p-3 border rounded"
-                placeholder="Enter your surname"
+                placeholder="Ingrese su apellido"
                 required
               />
             </div>
           </div>
           <div className="mb-4">
             <label className="block text-sm font-bold mb-2" htmlFor="email">
-              Email
+             Correo Electrónico
             </label>
             <input
               type="email"
@@ -96,13 +96,13 @@ const ContactForm = () => {
               value={formData.email}
               onChange={handleChange}
               className="w-full p-3 border rounded"
-              placeholder="Enter your email"
+              placeholder="ingrese su correo electrónico"
               required
             />
           </div>
           <div className="mb-6">
             <label className="block text-sm font-bold mb-2" htmlFor="message">
-              Message
+              Mensaje
             </label>
             <textarea
               id="message"
@@ -111,13 +111,13 @@ const ContactForm = () => {
               onChange={handleChange}
               className="w-full p-3 border rounded"
               rows="5"
-              placeholder="Enter your message"
+              placeholder="Ingrese el mensaje"
               required
             ></textarea>
           </div>
           {submitError && <div className="text-red-500 mb-4">{submitError}</div>}
           {submitSuccess && (
-            <div className="text-green-500 mb-4">Message sent successfully!</div>
+            <div className="text-green-500 mb-4">Mensaje enviado!</div>
           )}
           <button
             type="submit"

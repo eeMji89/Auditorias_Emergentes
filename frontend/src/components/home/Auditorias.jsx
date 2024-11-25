@@ -6,9 +6,9 @@ const AuditoriaTable = () => {
 
   // Sample data (replace with dynamic data from the backend)
   const [auditorias, setAuditorias] = useState([
-    { id: "#QFF111000001", empresa: "Empresa 1", industria: "Textil", fecha: "2023-11-21", status: "Active" },
-    { id: "#QFF111000002", empresa: "Empresa 2", industria: "Automotriz", fecha: "2023-11-22", status: "Inactive" },
-    { id: "#QFF111000003", empresa: "Empresa 3", industria: "Alimentos", fecha: "2023-11-23", status: "Active" },
+    { id: "#QFF111000001", empresa: "Empresa 1", industria: "Textil", fecha: "2023-11-21", status: "Active" ,detalles:"detalles.."},
+    { id: "#QFF111000002", empresa: "Empresa 2", industria: "Automotriz", fecha: "2023-11-22", status: "Inactive",detalles:"detalles.." },
+    { id: "#QFF111000003", empresa: "Empresa 3", industria: "Alimentos", fecha: "2023-11-23", status: "Active",detalles:"detalles.." },
   ]);
 
   const [selectedRows, setSelectedRows] = useState([]); // Store selected rows
@@ -80,6 +80,7 @@ const AuditoriaTable = () => {
             <th className="border border-gray-300 px-4 py-2">Tipo de Industria</th>
             <th className="border border-gray-300 px-4 py-2">Fecha</th>
             <th className="border border-gray-300 px-4 py-2">Estatus</th>
+            <th className="border border-gray-300 px-4 py-2">Detalles</th>
           </tr>
         </thead>
         <tbody>
@@ -96,12 +97,20 @@ const AuditoriaTable = () => {
               <td className="border border-gray-300 px-4 py-2">{auditoria.id}</td>
               <td className="border border-gray-300 px-4 py-2">{auditoria.empresa}</td>
               <td className="border border-gray-300 px-4 py-2">{auditoria.industria}</td>
-              <td className="border border-gray-300 px-4 py-2">{auditoria.fecha}</td>
+              <td className="border border-gray-300 px-4 py-2">{auditoria.fecha}</td>            
               <td className="border border-gray-300 px-4 py-2">
-                <span className={auditoria.status === "Active" ? "text-green-500" : "text-red-500"}>
-                  {auditoria.status}
-                </span>
+                <div className="flex items-center space-x-2">
+                    <span
+                    className={`w-2 h-2 rounded-full ${
+                        auditoria.status === "Active" ? "bg-green-500" : "bg-gray-500"
+                    }`}
+                    ></span>
+                    <span className={auditoria.status === "Active" ? "text-green-500" : "text-gray-500"}>
+                    {auditoria.status === "Active" ? "Valid" : "Invalid"}
+                    </span>
+                </div>
               </td>
+              <td className="border border-gray-300 px-4 py-2">{auditoria.detalles}</td> 
             </tr>
           ))}
         </tbody>
