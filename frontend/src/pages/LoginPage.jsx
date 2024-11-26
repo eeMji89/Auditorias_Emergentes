@@ -39,25 +39,33 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (formData.password.length < 8) {
       setPasswordError("La contraseña debe tener al menos 8 caracteres.");
       return;
     }
+  
     try {
       const response = await axios.post("http://localhost:5000/login", {
         Nombre_Usuario: usuario,
         Contraseña: contraseña,
-      });// If login is successful, store the JWT token
+      });
+  
+      // Successful login
       const { token } = response.data;
-      localStorage.setItem("token", token); // Store token in localStorage for future requests
-      // Redirect to home page
-      navigate("/home");
-      console.log("Form Submitted:", formData);
+      localStorage.setItem("token", token); // Store the JWT token
+      alert("Inicio de sesión exitoso"); // Optional: Inform user
+      navigate("/home"); // Redirect to home
     } catch (err) {
-      setError("Usuario o contraseña incorrectos");
+      // Handle errors
+      if (err.response && err.response.data) {
+        setError(err.response.data.error); // Set specific error message
+      } else {
+        setError("Error del servidor. Inténtalo más tarde.");
+      }
     }
   };
+  
 
   return (
     <AuthLayout>

@@ -1,39 +1,31 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-const { Pool } = require("pg");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+const { MongoClient } = require("mongodb");
 require("dotenv").config();
-
-console.log("Database Config:");
-console.log({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-const corsOptions = {
-  origin: "http://localhost:5173", // Adjust if your frontend is hosted elsewhere
-  methods: "GET,POST",
-  allowedHeaders: "Content-Type,Authorization",
-};
-app.use(cors(corsOptions));
-app.use(express.json());
+// MongoDB Connection
+const mongoUri = process.env.MONGODB_URI;
+const client = new MongoClient(mongoUri);
 
-// PostgreSQL Pool
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT || 5432,
-});
+let db;
+client
+  .connect()
+  .then(() => {
+    db = client.db("AuditoriasE");
+    console.log("Connected to MongoDB Atlas");
+  })
+  .catch((err) => {
+    console.error("Failed to connect to MongoDB", err);
+  });
+
+// Middleware
+app.use(cors({ origin: "http://localhost:5173", methods: "GET,POST" }));
+app.use(express.json());
 
 // Default Route
 app.get("/", (req, res) => {
@@ -61,52 +53,56 @@ app.post("/register", async (req, res) => {
   } = req.body;
 
   try {
-    // Validate common fields
+    // Validate required fields
     if (!Nombre_Usuario || !Contraseña || !Rol || !Pais || !Telefono || !Correo_Electronico) {
       return res.status(400).json({ error: "Missing required fields for user registration" });
+    }
+
+    if (!db) {
+      return res.status(500).json({ error: "Database not initialized" });
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(Contraseña, 10);
 
-    // Insert into USUARIO table
-    const usuarioResult = await pool.query(
-      `INSERT INTO public."USUARIO" ("Nombre_Usuario", "Contraseña", "Rol", "Pais", "Telefono", "Correo_Electronico")
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING "ID_Usuario"`,
-      [Nombre_Usuario, hashedPassword, Rol, Pais, Telefono, Correo_Electronico]
-    );
+    // Insert user
+    const user = {
+      Nombre_Usuario,
+      Contraseña: hashedPassword,
+      Rol,
+      Pais,
+      Telefono,
+      Correo_Electronico,
+    };
+    const result = await db.collection("usuarios").insertOne(user);
+    const userId = result.insertedId;
 
-    const userId = usuarioResult.rows[0].ID_Usuario;
-
-    // Handle role-specific tables
+    // Insert role-specific data
     if (Rol === "Auditor") {
       if (!Nombre_Auditor || !Especializacion || !Certificaciones) {
         return res.status(400).json({ error: "Missing required fields for Auditor role" });
       }
 
-      await pool.query(
-        `INSERT INTO public."AUDITOR" ("Nombre_Auditor", "Especializacion", "Certificaciones", "ID_Usuario")
-         VALUES ($1, $2, $3, $4)`,
-        [Nombre_Auditor, Especializacion, Certificaciones, userId]
-      );
+      await db.collection("auditores").insertOne({
+        Nombre_Auditor,
+        Especializacion,
+        Certificaciones,
+        UsuarioId: userId,
+      });
     } else if (Rol === "Empresa") {
       if (!Nombre_Empresa || !Tipo || !No_Registro || !Ubicacion || !Nombre_Representante || !Cargo_Representante) {
         return res.status(400).json({ error: "Missing required fields for Empresa role" });
       }
 
-      await pool.query(
-        `INSERT INTO public."EMPRESA" ("Nombre_Empresa", "Tipo", "No_Registro", "Ubicacion", "Nombre_Representante", "Cargo_Representante", "ID_Usuario")
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [
-          Nombre_Empresa,
-          Tipo,
-          No_Registro,
-          Ubicacion,
-          Nombre_Representante,
-          Cargo_Representante,
-          userId,
-        ]
-      );
+      await db.collection("empresas").insertOne({
+        Nombre_Empresa,
+        Tipo,
+        No_Registro,
+        Ubicacion,
+        Nombre_Representante,
+        Cargo_Representante,
+        UsuarioId: userId,
+      });
     } else {
       return res.status(400).json({ error: "Invalid role specified" });
     }
@@ -118,24 +114,22 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// Login Route
+// Login User
 app.post("/login", async (req, res) => {
   const { Nombre_Usuario, Contraseña } = req.body;
 
   try {
-    // Check if the user exists
-    const userResult = await pool.query(
-      `SELECT * FROM public."USUARIO" WHERE "Nombre_Usuario" = $1`,
-      [Nombre_Usuario]
-    );
+    if (!db) {
+      return res.status(500).json({ error: "Database not initialized" });
+    }
 
-    if (userResult.rows.length === 0) {
+    // Find the user
+    const user = await db.collection("usuarios").findOne({ Nombre_Usuario });
+    if (!user) {
       return res.status(401).json({ error: "Usuario no encontrado" });
     }
 
-    const user = userResult.rows[0];
-
-    // Compare the password with the hashed password in the database
+    // Compare passwords
     const isMatch = await bcrypt.compare(Contraseña, user.Contraseña);
     if (!isMatch) {
       return res.status(401).json({ error: "Contraseña incorrecta" });
@@ -143,8 +137,8 @@ app.post("/login", async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign(
-      { userId: user.ID_Usuario, role: user.Rol },
-      process.env.JWT_SECRET || "default_secret", // Replace with your secret
+      { userId: user._id, role: user.Rol },
+      process.env.JWT_SECRET || "default_secret",
       { expiresIn: "1h" }
     );
 
