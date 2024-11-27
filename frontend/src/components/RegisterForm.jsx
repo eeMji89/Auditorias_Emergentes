@@ -87,8 +87,29 @@ const RegisterForm = ({ entityType, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission
     if (validateAllFields()) {
-      // Pass valid data to onSubmit and move to the next step
-      onSubmit({ ...formData, certifications });
+      // Filter formData based on entityType
+      const filteredData =
+        entityType === "empresa"
+          ? {
+              Nombre_Empresa: formData.nombreEmpresa,
+              Pais: formData.paisResidencia,
+              Tipo: formData.tipoIndustria,
+              Ubicacion: formData.ubicacion,
+              No_Registro: formData.numeroRegistro,
+              Nombre_Representante: formData.nombreRepresentante,
+              Cargo_Representante: formData.cargo,
+              Correo_Electronico: formData.correoElectronico,
+              Telefono: formData.telefono,
+            }
+          : {
+              Nombre_Auditor: formData.nombreauditor,
+              Telefono: formData.telefono,
+              Correo_Electronico: formData.correo,
+              Pais: formData.pais,
+              Especializacion: formData.especializacion,
+              Certificaciones: certifications,
+            };
+        onSubmit(filteredData);
     }
   };
   

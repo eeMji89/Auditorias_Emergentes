@@ -22,7 +22,11 @@ const RegisterPage = () => {
 
   const handleCompleteSubmit = async (credentials) => {
     const finalData = { ...formData, ...credentials };
-  
+    console.log("Payload being sent:", {
+          ...finalData,
+          Rol: entityType === "empresa" ? "Empresa" : "Auditor",
+        });
+
     try {
       const response = await fetch("http://localhost:5000/register", {
         method: "POST",
@@ -34,7 +38,7 @@ const RegisterPage = () => {
           Rol: entityType === "empresa" ? "Empresa" : "Auditor",
         }),
       });
-  
+           
       if (response.ok) {
         const data = await response.json();
         alert("User registered successfully!");
@@ -42,11 +46,12 @@ const RegisterPage = () => {
         // Redirect to login or another page if needed
       } else {
         const error = await response.json();
+        console.error("Registration failed:", error);
         alert(`Registration failed: ${error.error}`);
       }
     } catch (error) {
       console.error("Error during registration:", error);
-      alert("An error occurred. Please try again.");
+      alert("Ocurrió un error. Inténtalo de nuevo.");
     }
   };
   
