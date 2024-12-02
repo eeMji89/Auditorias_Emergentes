@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const RegisterComplete = () => {
+// eslint-disable-next-line react/prop-types
+const RegisterComplete = ({ formData, onSubmit }) => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [credentials, setCredentials] = useState({
     usuario: "",
     password: "",
     confirmPassword: "",
@@ -13,12 +14,12 @@ const RegisterComplete = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setCredentials((prev) => ({ ...prev, [name]: value }));
     setError(""); // Clear error when user modifies fields
   };
 
   const handleRegister = () => {
-    const { usuario, password, confirmPassword } = formData;
+    const { usuario, password, confirmPassword } = credentials;
 
     // Validation
     if (!usuario || !password || !confirmPassword) {
@@ -32,14 +33,11 @@ const RegisterComplete = () => {
     }
 
     setIsSubmitting(true);
-
+    onSubmit({ Nombre_Usuario: usuario, Contraseña: password }); // Pass final credentials to RegisterPage
+    setIsSubmitting(false);
+    navigate("/login");
     // Simulate API call
-    setTimeout(() => {
-      console.log("Complete Registration Data:", formData);
-      setIsSubmitting(false);
-      // Redirect to login page
-      navigate("/login");
-    }, 2000);
+    
   };
 
   return (
@@ -58,7 +56,7 @@ const RegisterComplete = () => {
           <input
             type="text"
             name="usuario"
-            value={formData.usuario}
+            value={credentials.usuario}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
             placeholder="Crea tu usuario"
@@ -69,7 +67,7 @@ const RegisterComplete = () => {
           <input
             type="password"
             name="password"
-            value={formData.password}
+            value={credentials.password}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
             placeholder="Crea tu contraseña"
@@ -82,7 +80,7 @@ const RegisterComplete = () => {
           <input
             type="password"
             name="confirmPassword"
-            value={formData.confirmPassword}
+            value={credentials.confirmPassword}
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded"
             placeholder="Confirma tu contraseña"
