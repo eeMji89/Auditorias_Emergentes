@@ -27,7 +27,7 @@ const AuditoriasPage = () => {
       <div className="flex-1 flex flex-col">
         {/* Header */}
         <header className="bg-green-800 text-white py-4 px-6">
-          <h1 className="text-xl font-bold">Nexcent</h1>
+          <h1 className="text-xl font-bold">ETHICCHAIN</h1>
         </header>
 
         {/* Page Content */}
