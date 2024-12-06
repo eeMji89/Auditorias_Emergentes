@@ -26,7 +26,7 @@ const UserLayout = ({ children }) => {
       {/* Main Content */}
       <div className="flex-grow flex flex-col">
         {/* Header */}
-        <header className=" static bg-shadeS5 py-2 shadow-md flex items-center w-full justify-between px-6">
+        <header className= {` ${isMobileOpen? "hidden" : '' } static bg-shadeS5 py-2 shadow-md flex items-center w-full justify-between px-6`}>
           {/* Mobile Sidebar Toggle */}
           <button
             onClick={toggleMobileSidebar}

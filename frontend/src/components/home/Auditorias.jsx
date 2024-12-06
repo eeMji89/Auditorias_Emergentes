@@ -37,10 +37,10 @@ const AuditoriaTable = () => {
   };
 
   return (
-    <div className="p-6 shadow-lg mx-auto bg-white rounded-lg overflow-x-auto">
+    <div className="p-6 shadow-lg mx-auto bg-white rounded-lg overflow-x-scroll">
       {/* Header with buttons */}
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Auditorías Activas</h1>
+      <div className="flex justify-between items-center mb-4 ">
+        <h1 className="lg:text-2xl font-bold sm:text-md">Auditorías Activas</h1>
         <div className="flex space-x-6">
           {selectedRows.length > 0 && (
             <button
@@ -60,10 +60,10 @@ const AuditoriaTable = () => {
       </div>
 
       {/* Table */}
-      <table className="w-full table-auto border-collapse border border-gray-300">
+      <table className="w-full table-auto border-collapse border border-gray-300 ">
         <thead>
           <tr>
-            <th className="border border-gray-300 px-4 py-2">
+            <th className="border border-gray-300 px-4 py-2 ">
               <input
                 type="checkbox"
                 onChange={(e) => {

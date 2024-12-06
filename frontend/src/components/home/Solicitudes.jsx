@@ -16,7 +16,7 @@ const SolicitudTable = () => {
 
   // Navigate to the form
   const handleNuevaSolicitud = () => {
-    navigate("/home/solicitudes/nueva");
+    navigate("/home/solicitudes/auditores-disponibles");
   };
 
   // Handle row selection

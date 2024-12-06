@@ -48,7 +48,7 @@ const LoginPage = () => {
     try {
       const response = await axios.post("http://localhost:5000/login", {
         Nombre_Usuario: usuario,
-        Contraseña: contraseña,
+        Contrasena: contraseña,
       });
   
       // Successful login

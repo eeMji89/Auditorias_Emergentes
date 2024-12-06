@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React ,{useEffect, useState} from "react";
 import {
   FaUser,
   FaBell,
@@ -10,29 +10,64 @@ import {
   FaGlobe,
   FaKey,
 } from "react-icons/fa";
+import { NavLink, useLocation } from "react-router-dom";
 
 const Sidebar = ({ isOpen, toggleSidebar, isMobileOpen,toggleMobileSidebar }) => {
+  // eslint-disable-next-line no-undef
+  const [username, setUsername] = useState();
+
+useEffect(() => {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    console.error("No token found in localStorage");
+    return;
+  }
+
+  fetch("http://localhost:5000/user-profile", {
+    headers: {
+      Authorization: `Bearer ${token}`, // Send token in Authorization header
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("User Profile:", data);
+      if (data.username) {
+        setUsername(data.username);
+      } else {
+        console.error("Username not found in response");
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching user profile:", error);
+    });
+}, []);
+
   const menuSections = [
     {
       title: "Profile",
       items: [
-        { label: "Profile", icon: <FaUser />, link: "/home" },       
-        { label: "Notifications", icon: <FaBell />, link: "/home" },
+        { label: "Profile", icon: <FaUser />, link: "/home/perfil" },       
+        { label: "Notifications", icon: <FaBell />, link: "/home/notificaciones" },
       ],
     },
     {
       title: "Auditorías",
       items: [
-        { label: "Auditorías", icon: <FaFileAlt />, link: "/home/auditorias", active: true },
+        { label: "Auditorías", icon: <FaFileAlt />, link: "/home/auditorias"},
         { label: "Solicitudes", icon: <FaKey />, link: "/home/solicitudes" },
       ],
     },
     {
       title: "Seguridad",
       items: [
-        { label: "Password", icon: <FaLock />, link: "/home" },
-        { label: "Soporte y Contacto", icon: <FaHeadset />, link: "/home" },
-        { label: "Términos y Condiciones", icon: <FaFileAlt />, link: "/home" },
+        { label: "Password", icon: <FaLock />, link: "/home/configurar-contraseña" },
+        { label: "Soporte y Contacto", icon: <FaHeadset />, link: "/home/soporte-contacto" },
+        { label: "Términos y Condiciones", icon: <FaFileAlt />, link: "/home/terminos-condiciones" },
       ],
     },
   ];
@@ -63,7 +98,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobileOpen,toggleMobileSidebar }) =>
             <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center">
               A
             </div>
-            {isOpen && <span className="font-bold">User</span>}
+            {isOpen && <span className="font-bold">{username}</span>}
           </div>
         </div>
 
@@ -77,17 +112,21 @@ const Sidebar = ({ isOpen, toggleSidebar, isMobileOpen,toggleMobileSidebar }) =>
                 </h3>
               )}
               <ul className="space-y-2">
-                {section.items.map(({ label, icon, link, active }) => (
+                {section.items.map(({ label, icon, link }) => (
                   <li key={label}>
-                    <a
-                      href={link}
-                      className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm ${
-                        active
-                          ? "bg-green-100 text-green-600 border border-green-500"
-                          : "text-gray-700 hover:bg-gray-200" }`} >
+                   <NavLink
+                      to={link}
+                      className={({ isActive }) =>
+                        `flex items-center space-x-3 px-3 py-2 rounded-lg text-sm ${
+                          isActive
+                            ? "bg-green-100 text-green-600 border border-green-500"
+                            : "text-gray-700 hover:bg-gray-200"
+                        }`
+                      }
+                    >
                       <span className="text-xl">{icon}</span>
                       {isOpen && <span>{label}</span>}
-                    </a>
+                    </NavLink>
                   </li>
                 ))}
               </ul>

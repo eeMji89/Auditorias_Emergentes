@@ -28,26 +28,44 @@ const RegisterPage = () => {
         });
 
     try {
+      const formDataToSend = new FormData();
+
+      // Append text fields
+      Object.entries(finalData).forEach(([key, value]) => {
+        if (key !== "Certificaciones") {
+          formDataToSend.append(key, value);
+        }
+      });  
+      formDataToSend.append("Rol", entityType === "empresa" ? "Empresa" : "Auditor");
+
+      // Append files for Certificaciones (if present)
+      if (entityType === "auditor" && finalData.Certificaciones) {
+        finalData.Certificaciones.forEach((file) => {
+          formDataToSend.append("Certificaciones", file);
+        });
+      }
+      for (let pair of formDataToSend.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
+      
       const response = await fetch("http://localhost:5000/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...finalData,
-          Rol: entityType === "empresa" ? "Empresa" : "Auditor",
-        }),
+        body: formDataToSend
       });
-           
+      const contentType = response.headers.get("content-type");
+      let responseData;
+      if (contentType && contentType.includes("application/json")) {
+        responseData = await response.json();
+      } else {
+        responseData = await response.text(); // Fallback for non-JSON responses
+      }
       if (response.ok) {
-        const data = await response.json();
         alert("User registered successfully!");
-        console.log("Registration successful:", data);
+        console.log("Registration successful:", responseData);
         // Redirect to login or another page if needed
       } else {
-        const error = await response.json();
-        console.error("Registration failed:", error);
-        alert(`Registration failed: ${error.error}`);
+        console.error("Registration failed:", responseData);
+        alert(`Registration failed: ${responseData.error || responseData}`);
       }
     } catch (error) {
       console.error("Error during registration:", error);

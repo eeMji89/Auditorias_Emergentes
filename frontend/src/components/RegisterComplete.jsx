@@ -33,11 +33,10 @@ const RegisterComplete = ({ formData, onSubmit }) => {
     }
 
     setIsSubmitting(true);
-    onSubmit({ Nombre_Usuario: usuario, Contraseña: password }); // Pass final credentials to RegisterPage
+    onSubmit({ Nombre_Usuario: usuario, Contrasena: password }); // Pass final credentials to RegisterPage
     setIsSubmitting(false);
     navigate("/login");
-    // Simulate API call
-    
+ 
   };
 
   return (

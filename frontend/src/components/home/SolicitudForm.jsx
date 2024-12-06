@@ -26,7 +26,7 @@ const SolicitudForm = () => {
   };
 
   return (
-    <div className="p-6 md:w-[800px] mx-auto bg-white rounded-xl shadow-md">
+    <div className="p-6 lg:w-[800px] md:w-[600px] mx-auto bg-white rounded-xl shadow-md">
       <h1 className="text-2xl font-bold mb-2">Solicitud de Auditoría</h1>
       <p className="text-gray-500 mb-6">Subheading</p>
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -62,7 +62,7 @@ const SolicitudForm = () => {
         <div className="flex justify-between md:text-lg text-xs">
           <button
             type="button"
-            onClick={() => navigate("/home")} // Adjust to your back navigation route
+            onClick={() => navigate("/home/solicitudes/perfil-auditor")} // Adjust to your back navigation route
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" >
             ← Regresar
           </button>

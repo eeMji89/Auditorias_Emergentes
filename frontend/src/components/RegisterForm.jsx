@@ -62,27 +62,24 @@ const RegisterForm = ({ entityType, onSubmit }) => {
   };
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const validTypes = ["application/pdf", "image/jpeg", "image/png"];
-      if (!validTypes.includes(file.type)) {
-        setErrors((prev) => ({
-          ...prev,
-          certificaciones: "Solo se aceptan archivos PDF o imágenes.",
-        }));
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({
-          ...prev,
-          certificaciones: "El archivo no debe superar los 5 MB.",
-        }));
-        return;
-      }
-      setErrors((prev) => ({ ...prev, certificaciones: "" }));
-      setCertifications(file);
+    const files = Array.from(e.target.files); // Convert FileList to Array
+    const validTypes = ["application/pdf", "image/jpeg", "image/png"];
+    const validFiles = files.filter(
+      (file) => validTypes.includes(file.type) && file.size <= 5 * 1024 * 1024
+    );
+
+    if (validFiles.length !== files.length) {
+      setErrors((prev) => ({
+        ...prev,
+        certificaciones: "Algunos archivos son inválidos o superan los 5 MB.",
+      }));
+      return;
     }
+
+    setErrors((prev) => ({ ...prev, certificaciones: "" }));
+    setCertifications(validFiles);
   };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission
@@ -282,7 +279,7 @@ const RegisterForm = ({ entityType, onSubmit }) => {
               </label>
               <input type="file" name="certificaciones" id="certificaciones"
                 onChange={handleFileChange}
-                className="w-full px-4 py-2 border rounded" accept=".pdf,.doc,.docx,.jpg,.png"/>
+                className="w-full px-4 py-2 border rounded" accept=".pdf,.doc,.docx,.jpg,.png" multiple/>
               <p className="text-xs text-gray-500 mt-2">
                 Puedes subir documentos en formato PDF, DOC, o imágenes.
               </p>
