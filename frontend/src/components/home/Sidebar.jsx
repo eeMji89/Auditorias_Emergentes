@@ -10,22 +10,24 @@ import {
   FaGlobe,
   FaKey,
 } from "react-icons/fa";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, toggleSidebar, isMobileOpen,toggleMobileSidebar }) => {
   // eslint-disable-next-line no-undef
   const [username, setUsername] = useState();
-
+  const navigate = useNavigate();
 useEffect(() => {
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("token");
+  console.log("Token received:", token);
+
   if (!token) {
     console.error("No token found in localStorage");
     return;
   }
 
-  fetch("http://localhost:5000/user-profile", {
+  fetch("http://localhost:5000/userauth", {
     headers: {
-      Authorization: `Bearer ${token}`, // Send token in Authorization header
+      Authorization: `Bearer ${token}`,
     },
   })
     .then((response) => {
@@ -71,7 +73,11 @@ useEffect(() => {
       ],
     },
   ];
-
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login"); // Redirect to login page
+  };
+  
   return (
     <>
       {/* Mobile Sidebar Overlay */}
@@ -136,7 +142,7 @@ useEffect(() => {
 
         {/* Logout */}
         <div className="px-4 py-4">
-          <button className="flex items-center w-full text-red-600 space-x-3 text-sm">
+          <button className="flex items-center w-full text-red-600 space-x-3 text-sm" onClick={handleLogout}>
             <FaSignOutAlt />
             {isOpen && <span>Cerrar Sesión</span>}
           </button>

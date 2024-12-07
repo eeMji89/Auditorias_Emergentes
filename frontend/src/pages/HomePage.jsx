@@ -24,7 +24,7 @@ const UserPage = () => {
             <Route path="auditorias/nueva" element={<AuditoriaForm />} /> {/* Auditoria form */}
             <Route path="solicitudes" element={<SolicitudTable />} /> {/* Auditorias table */}
             <Route path="solicitudes/nueva" element={<SolicitudForm />} /> {/* Auditoria form */}
-            <Route path="solicitudes/perfil-auditor" element={<PerfilAuditor/>} /> {/* Auditoria form */}
+            <Route path="solicitudes/perfil-auditor/:id" element={<PerfilAuditor/>} /> {/* Auditoria form */}
             <Route path="solicitudes/auditores-disponibles" element={<AuditoresDisponibles/>} /> {/* Auditorias table */}
             <Route path="configurar-contraseña" element={<ResetPassword/>} /> {/* Auditorias table */}
             <Route path="terminos-condiciones" element={<TerminosCondiciones/>} /> {/* Auditorias table */}

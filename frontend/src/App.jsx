@@ -4,6 +4,7 @@ import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
 
@@ -14,7 +15,11 @@ function App() {
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/register/empresa" element={<RegisterPage />} />
     <Route path="/register/auditor" element={<RegisterPage />} />
-    <Route path="/home/*" element={<HomePage />} />
+    <Route path="/home/*" element={
+       <ProtectedRoute>
+       <HomePage />
+     </ProtectedRoute>
+    } />
   </Routes>
   )
 }

@@ -1,5 +1,6 @@
 import React , { useState } from "react";
 import axios from "axios";
+import { login } from "../api/auth";
 import AuthLayout from "../components/AuthLayout";
 import { useNavigate } from "react-router-dom";
 
@@ -46,7 +47,7 @@ const LoginPage = () => {
     }
   
     try {
-      const response = await axios.post("http://localhost:5000/login", {
+      const response = await login({
         Nombre_Usuario: usuario,
         Contrasena: contraseña,
       });

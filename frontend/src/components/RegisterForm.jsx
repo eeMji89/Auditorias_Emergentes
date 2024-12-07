@@ -106,7 +106,11 @@ const RegisterForm = ({ entityType, onSubmit }) => {
               Especializacion: formData.especializacion,
               Certificaciones: certifications,
             };
+
+            console.log("Selected Certifications:", certifications);
+
         onSubmit(filteredData);
+      
     }
   };
   

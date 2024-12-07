@@ -3,6 +3,7 @@ import RegisterForm from "../components/RegisterForm";
 import RegisterChoice from "../components/RegisterChoser";
 import RegisterComplete from "../components/RegisterComplete";
 import AuthLayout from "../components/AuthLayout";
+import { register } from "../api/auth";
 
 
 const RegisterPage = () => {
@@ -12,12 +13,12 @@ const RegisterPage = () => {
 
 
   const handleFormSubmit = (data) => {
-    setFormData(data);
-    setStep(2); // Move to the next step
+    setFormData((prev) => ({ ...prev, ...data }));
+    setStep(2); 
   };
   const handleEntitySelect = (type) => {
     setEntityType(type); // Set selected entity ("empresa" or "auditor")
-    setStep(1); // Move to step 1: RegisterForm
+    setStep(1); 
   };
 
   const handleCompleteSubmit = async (credentials) => {
@@ -41,6 +42,7 @@ const RegisterPage = () => {
       // Append files for Certificaciones (if present)
       if (entityType === "auditor" && finalData.Certificaciones) {
         finalData.Certificaciones.forEach((file) => {
+          console.log(file);
           formDataToSend.append("Certificaciones", file);
         });
       }
@@ -48,25 +50,10 @@ const RegisterPage = () => {
         console.log(pair[0] + ": " + pair[1]);
       }
       
-      const response = await fetch("http://localhost:5000/register", {
-        method: "POST",
-        body: formDataToSend
-      });
-      const contentType = response.headers.get("content-type");
-      let responseData;
-      if (contentType && contentType.includes("application/json")) {
-        responseData = await response.json();
-      } else {
-        responseData = await response.text(); // Fallback for non-JSON responses
-      }
-      if (response.ok) {
+      const response = await register (formDataToSend);      
+        console.log("Registration successful:",response.data);
         alert("User registered successfully!");
-        console.log("Registration successful:", responseData);
-        // Redirect to login or another page if needed
-      } else {
-        console.error("Registration failed:", responseData);
-        alert(`Registration failed: ${responseData.error || responseData}`);
-      }
+    
     } catch (error) {
       console.error("Error during registration:", error);
       alert("Ocurrió un error. Inténtalo de nuevo.");
