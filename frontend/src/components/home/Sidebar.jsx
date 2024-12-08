@@ -52,7 +52,7 @@ useEffect(() => {
     {
       title: "Profile",
       items: [
-        { label: "Profile", icon: <FaUser />, link: "/home/perfil" },       
+        { label: "Profile", icon: <FaUser />, link: "/home/perfilUsuario" },       
         { label: "Notifications", icon: <FaBell />, link: "/home/notificaciones" },
       ],
     },

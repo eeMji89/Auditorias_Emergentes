@@ -99,8 +99,26 @@ const upload = multer({storage}); // Allow up to 10 files
         console.error("User not found for ID:", req.user.userId);
         return res.status(404).json({ error: "User not found" });
       }
-  
-      res.json({ username: user.Nombre_Usuario, role: user.Rol });
+      let profileId = null;
+      if (req.user.role === "Empresa") {
+        const empresa = await db.collection("empresas").findOne({ UsuarioId: userId });
+        if (empresa) {
+          console.log(empresa._id.toString() );
+          profileId = empresa._id.toString();
+          console.log(profileId);
+        }
+      } else if (req.user.role === "Auditor") {
+        const auditor = await db.collection("auditores").findOne({ UsuarioId:userId});
+        if (auditor) {
+          profileId = auditor._id.toString();
+        }
+        console.log(profileId);
+      }
+    res.json({
+      ID: profileId,
+      username: user.Nombre_Usuario,
+      role: user.Rol,
+    });
     } catch (err) {
       console.error("Error in /userauthfile:", err);
       res.status(500).json({ error: "Internal Server Error" });
@@ -448,32 +466,67 @@ app.put("/auditores/:id",authenticateToken, async (req, res) => {
 });
 
 // Get All Empresas
-app.get("/empresas",authenticateToken, async (req, res) => {
+app.get("/empresas", authenticateToken, async (req, res) => {
   try {
+    // Fetch all empresas
     const empresas = await db.collection("empresas").find().toArray();
-    res.status(200).json(empresas);
+
+    // Fetch user data for all empresas
+    const userIds = empresas.map((empresa) => new ObjectId(empresa.UsuarioId));
+    const users = await db.collection("usuarios").find({ _id: { $in: userIds } }).toArray();
+
+    // Map user data by their IDs for easy lookup
+    const userMap = users.reduce((map, user) => {
+      map[user._id.toString()] = user;
+      return map;
+    }, {});
+
+    // Enhance empresas with user data
+    const empresasWithUserData = empresas.map((empresa) => {
+      const user = userMap[empresa.UsuarioId.toString()] || {};
+      return {
+        ...empresa,
+        Correo_Electronico: user.Correo_Electronico || null,
+        Telefono: user.Telefono || null,
+        Pais: user.Pais || null,
+      };
+    });
+
+    res.status(200).json(empresasWithUserData);
   } catch (err) {
     console.error("Error fetching empresas:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
+
 // Get Empresa by ID
-app.get("/empresas/:id",authenticateToken, async (req, res) => {
+app.get("/empresas/:id", authenticateToken, async (req, res) => {
   const empresaId = req.params.id;
+
   try {
-    const empresa = await db.collection("empresas").findOne({_id: new ObjectId(empresaId) });
+    // Fetch the empresa by ID
+    const empresa = await db.collection("empresas").findOne({ _id: new ObjectId(empresaId) });
 
     if (!empresa) {
       return res.status(404).json({ error: "Empresa not found" });
     }
 
-    res.status(200).json(empresa);
+    // Fetch the associated user data
+    const user = await db.collection("usuarios").findOne({ _id: new ObjectId(empresa.UsuarioId) });
+
+    res.status(200).json({
+      ...empresa,
+      Correo_Electronico: user?.Correo_Electronico || null,
+      Telefono: user?.Telefono || null,
+      Pais: user?.Pais || null,
+    });
   } catch (err) {
     console.error("Error fetching empresa by ID:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 app.put("/empresas/:id",authenticateToken, async (req, res) => {
   const empresaId = req.params.id;

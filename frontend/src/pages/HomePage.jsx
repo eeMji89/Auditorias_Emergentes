@@ -12,26 +12,26 @@ import AuditoresDisponibles from "../components/home/AuditoresDisponibles";
 import ResetPassword from "../components/home/ResetPassword";
 import TerminosCondiciones from "../components/home/TerminosCond";
 import SoporteContacto from "../components/home/Soporte";
-import EditProfile from "../components/home/EditProfile";
+import UserProfile from "../components/home/EditProfile";
 import Notifications from "../components/home/Notifications";
-
+import SolicitudDetail from "../components/home/DetallesSolicitud";
 const UserPage = () => {
     return (
         <UserLayout>           
             <Routes>
             <Route path="/" element={<Homecontent />} /> {/* Default content */}
-            <Route path="auditorias" element={<AuditoriaTable />} /> {/* Auditorias table */}
-            <Route path="auditorias/nueva" element={<AuditoriaForm />} /> {/* Auditoria form */}
-            <Route path="solicitudes" element={<SolicitudTable />} /> {/* Auditorias table */}
-            <Route path="solicitudes/nueva" element={<SolicitudForm />} /> {/* Auditoria form */}
-            <Route path="solicitudes/perfil-auditor/:id" element={<PerfilAuditor/>} /> {/* Auditoria form */}
-            <Route path="solicitudes/auditores-disponibles" element={<AuditoresDisponibles/>} /> {/* Auditorias table */}
-            <Route path="configurar-contraseña" element={<ResetPassword/>} /> {/* Auditorias table */}
-            <Route path="terminos-condiciones" element={<TerminosCondiciones/>} /> {/* Auditorias table */}
-            <Route path="soporte-contacto" element={<SoporteContacto/>} /> {/* Auditorias table */}
-            <Route path="perfil" element={<EditProfile/>} /> {/* Auditorias table */}
-            <Route path="notificaciones" element={<Notifications/>} /> {/* Auditorias table */}
-        
+            <Route path="auditorias" element={<AuditoriaTable />} /> 
+            <Route path="auditorias/nueva" element={<AuditoriaForm />} /> 
+            <Route path="solicitudes" element={<SolicitudTable />} /> 
+            <Route path="solicitudes/nueva" element={<SolicitudForm />} /> 
+            <Route path="solicitudes/perfil-auditor/:id" element={<PerfilAuditor/>} /> 
+            <Route path="solicitudes/auditores-disponibles" element={<AuditoresDisponibles/>} /> 
+            <Route path="solicitudes/detalles/:id" element={<SolicitudDetail/>} />
+            <Route path="configurar-contraseña" element={<ResetPassword/>} /> 
+            <Route path="terminos-condiciones" element={<TerminosCondiciones/>} /> 
+            <Route path="soporte-contacto" element={<SoporteContacto/>} /> 
+            <Route path="perfilUsuario" element={<UserProfile/>} /> 
+            <Route path="notificaciones" element={<Notifications/>} />       
             </Routes>           
         </UserLayout>
     );

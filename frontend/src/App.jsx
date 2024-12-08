@@ -7,7 +7,6 @@ import HomePage from "./pages/HomePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-
   return (
     <Routes>
     <Route path="/" element={<LandingPage />} />

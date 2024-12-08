@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BiTrash } from "react-icons/bi";
+import { fetchUserProfile } from "../../api/auth";
 const AuditoriaTable = () => {
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState("");
+  const [isEmpresa, setIsEmpresa] = useState(false);
 
   // Sample data (replace with dynamic data from the backend)
   const [auditorias, setAuditorias] = useState([
@@ -17,7 +20,23 @@ const AuditoriaTable = () => {
   const handleNuevaAuditoria = () => {
     navigate("/home/auditorias/nueva");
   };
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        // Fetch user profile to get role
+        const userRoleResponse = await fetchUserProfile();
+        const role = userRoleResponse.data.role;
+        console.log("User Role:", role);
 
+        setUserRole(role);
+        setIsEmpresa(role === "Empresa");
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchUser();
+  }, []);
   // Handle row selection
   const handleRowSelection = (id) => {
     setSelectedRows((prevSelectedRows) =>
@@ -37,11 +56,11 @@ const AuditoriaTable = () => {
   };
 
   return (
-    <div className="p-6 shadow-lg mx-auto bg-white rounded-lg overflow-x-scroll">
+    <div className="p-6 shadow-lg md:w-11/12 w-[360px] mx-auto bg-white rounded-lg overflow-x-auto">
       {/* Header with buttons */}
       <div className="flex justify-between items-center mb-4 ">
         <h1 className="lg:text-2xl font-bold sm:text-md">Auditorías Activas</h1>
-        <div className="flex space-x-6">
+        <div className="flex space-x-6 sm: text-xs">
           {selectedRows.length > 0 && (
             <button
             onClick={handleDeleteSelected}
@@ -51,14 +70,18 @@ const AuditoriaTable = () => {
             <span className="font-medium">Borrar</span>
           </button>
           )}
+          {!isEmpresa && (
           <button
             onClick={handleNuevaAuditoria}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
             + Nueva Auditoría
           </button>
+          )}
         </div>
       </div>
+      <div className="overflow-x-auto">
 
+      
       {/* Table */}
       <table className="w-full table-auto border-collapse border border-gray-300 ">
         <thead>
@@ -115,6 +138,7 @@ const AuditoriaTable = () => {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

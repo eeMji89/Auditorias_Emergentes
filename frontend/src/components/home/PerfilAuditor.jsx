@@ -45,7 +45,7 @@ const PerfilAuditor = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="max-w-6xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
       {/* Profile Header */}
       <div className="flex items-center p-6 bg-green-800 text-white">
         <img
@@ -73,7 +73,7 @@ const PerfilAuditor = () => {
        
         </div>
         
-        <h2 className="text-sm font-bold text-gray-700 pb-8">Certificaciones:</h2>
+        <h2 className="text-sm font-bold text-gray-700 xs:pb-12 pb-5">Certificaciones:</h2>
         <div className="flex justify-center items-center w-inherited md:h-96  ">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 w-inherited flex justify-center items-center ">
           {auditor.Certificaciones.map((cert, index) => (

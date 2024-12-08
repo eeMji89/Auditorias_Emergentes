@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchSolicitudById } from "../../api/Solicitudes";
+import {getSolicitudById } from "../../api/Solicitudes";
 
 const SolicitudDetail = () => {
   const { id } = useParams(); // Get the solicitud ID from the URL
@@ -12,7 +12,7 @@ const SolicitudDetail = () => {
   useEffect(() => {
     const getSolicitudDetails = async () => {
       try {
-        const response = await fetchSolicitudById(id);
+        const response = await getSolicitudById(id);
         setSolicitud(response.data);
       } catch (err) {
         console.error("Error fetching solicitud details:", err);
@@ -38,32 +38,59 @@ const SolicitudDetail = () => {
   }
 
   return (
-    <div className="p-6 lg:w-[800px] md:w-[600px] mx-auto bg-white rounded-xl shadow-md">
-      <h1 className="text-2xl font-bold mb-4">Detalles de la Solicitud</h1>
-      <div className="space-y-4">
-        <p>
-          <strong>Fecha de Auditoría:</strong>{" "}
-          {new Date(solicitud.Fecha).toISOString().split("T")[0]}
-        </p>
-        <p>
-          <strong>Empresa Responsable:</strong> {solicitud.EmpresaName}
-        </p>
-        <p>
-          <strong>Auditor Asignado:</strong> {solicitud.AuditorName}
-        </p>
-        <p>
-          <strong>Detalles:</strong> {solicitud.Detalles}
-        </p>
-      </div>
-      <div className="flex justify-end mt-6">
+    <div className="space-y-3 ">
+        <div className="flex justify-between items-center bg-white p-4  shadow-sm rounded-xl">
         <button
-          onClick={() => navigate("/home/solicitudes")}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        onClick={() => navigate("/home/solicitudes")}
+        className="bg-green-500 text-white font-medium px-5 py-2.5 rounded-lg shadow-sm transition hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
         >
-          ← Volver a Solicitudes
+        ← Volver a Solicitudes
         </button>
-      </div>
     </div>
+    
+    <div className="p-12 max-w-6xl mx-auto rounded-xl shadow-md bg-white space-y-6">
+        <div className="space-y-2 mt-6 ">
+            <h1 className="text-xl font-bold text-gray-800">
+            Detalles de Solicitud ID: <span className="text-green-800">#{id}</span>
+            </h1>
+            <p className="text-sm text-gray-500">Solicitud de Auditoria</p>
+        </div>
+
+        <hr className="border-gray-200" />
+
+        <div className="grid grid-cols-2 gap-6 text-gray-700">
+            <div className="space-y-4">
+            <p>
+                <span className="font-semibold">Nombre de la Empresa:</span> {solicitud.EmpresaName}
+            </p>
+            <p>
+                <span className="font-semibold">Fecha:</span>{" "}
+                {new Date(solicitud.Fecha).toLocaleDateString()}
+            </p>
+            </div>
+
+            <div className="space-y-4">
+            <p>
+                <span className="font-semibold">Auditor:</span>{" "}
+                {solicitud.AuditorName}
+            </p>
+            <p>
+                <span className="font-semibold">Empresa Auditora:</span>{" "}
+                {solicitud.EmpresaAuditora}
+            </p>
+            
+            </div>
+        </div>
+
+        <hr className="border-gray-200" />
+
+        <div className="space-y-4">
+            <h2 className="text-lg font-bold text-gray-800">Detalles de la Auditoría</h2>
+            <p>{solicitud.Detalles}</p>
+        </div>
+    </div>
+</div>
+
   );
 };
 
