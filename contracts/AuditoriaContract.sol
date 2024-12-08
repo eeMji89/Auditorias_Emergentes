@@ -1,24 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract AuditoriaContract {
-    struct Auditoria {
-        uint256 createdDate;
-        uint256 relatedDate;
+contract AuditoriasContract {
+    uint256 public dateCreated; // Timestamp when the contract was deployed
+    bool public isValid;        // Validity flag
+
+    // Constructor to set the date and validity
+    constructor(bool _initialValidity) {
+        dateCreated = block.timestamp; // Set the creation date
+        isValid = _initialValidity;    // Set the initial validity
     }
 
-    Auditoria[] public auditorias;
-
-    function addAuditoria(uint256 _relatedDate) public {
-        auditorias.push(Auditoria(block.timestamp, _relatedDate));
+    // Function to get the creation date
+    function getCreationDate() public view returns (uint256) {
+        return dateCreated;
     }
 
-    function getAuditoria(uint256 index) public view returns (Auditoria memory) {
-        require(index < auditorias.length, "Index out of bounds");
-        return auditorias[index];
-    }
-
-    function getTotalAuditorias() public view returns (uint256) {
-        return auditorias.length;
+    // Function to update the validity status
+    function setValidity(bool _isValid) public {
+        isValid = _isValid;
     }
 }
