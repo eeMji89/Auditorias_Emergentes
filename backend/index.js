@@ -142,6 +142,58 @@ const upload = multer({storage}); // Allow up to 10 files
     }
   });
 
+  app.post("/notifications", authenticateToken, async (req, res) => {
+    const { recipientId, message, type } = req.body;
+  
+    try {
+      const notification = {
+        recipientId,
+        message,
+        type,
+        status: "unread",
+        createdAt: new Date(),
+      };
+      await db.collection("notifications").insertOne(notification);
+  
+      res.status(201).json({ message: "Notification created successfully" });
+    } catch (error) {
+      console.error("Error creating notification:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  app.get("/notifications", authenticateToken, async (req, res) => {
+    try {
+      const notifications = await db
+        .collection("notifications")
+        .find({ recipientId: req.user.userId })
+        .sort({ createdAt: -1 })
+        .toArray();
+  
+      res.status(200).json(notifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  app.put("/notifications/:id", authenticateToken, async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      await db
+        .collection("notifications")
+        .updateOne({ _id: new ObjectId(id) }, { $set: { status: "read" } });
+  
+      res.status(200).json({ message: "Notification marked as read" });
+    } catch (error) {
+      console.error("Error updating notification:", error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+  
+  
+
   app.put("/update-password/:id", async (req, res) => {
     const userId = req.params.id; // User ID from the URL parameter
     const { currentPassword, newPassword } = req.body;

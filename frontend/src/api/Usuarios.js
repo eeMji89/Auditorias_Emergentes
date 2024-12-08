@@ -11,3 +11,7 @@ export const fetchEmpresas = () => api.get("/empresas");
 export const getEmpresaById = (id) => api.get(`/empresas/${id}`);
 
 export const updateEmpresa = (id, data) => api.put(`/empresas/${id}`, data);
+
+export const fetchNotifications = () => api.get('/notifications');
+
+export const markNotificationAsRead = (id) => api.put(`/notifications/${id}`);
