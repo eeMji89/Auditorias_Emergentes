@@ -688,6 +688,93 @@ app.delete("/solicitudes/:id", authenticateToken, async (req, res) => {
   }
 });
 
+app.post("/auditorias", authenticateToken, async (req, res) => {
+  const {
+    ID_Auditor,
+    ID_Empresa,
+    Fecha,
+    Estatus,
+    Descripcion,
+    Salario,
+    Horas_Extra,
+    Seguro,
+    Vacaciones,
+    Comentarios
+  } = req.body;
+  const userId = req.user.userId; // ID del usuario logueado extraído del token
+
+  console.log("Request body:", req.body); // Log de los datos entrantes
+  console.log("User ID:", userId); // Log del ID del usuario del token
+
+  try {
+    // Validar campos requeridos
+    if (!ID_Auditor || !ID_Empresa || !Fecha || !Estatus || !Descripcion) {
+      return res.status(400).json({ error: "Faltan campos requeridos" });
+    }
+
+    const empresa = await db.collection("empresas").findOne({UsuarioId: new ObjectId(userId)});
+
+    if (!empresa) {
+      return res.status(404).json({ error: "Empresa not found for the logged-in user" });
+    }
+
+    const ID_Empresa = empresa._id.toString(); 
+    
+    const result = await db.collection("auditorias").insertOne({
+      ID_Auditor,
+      ID_Empresa,
+      Fecha: new Date(Fecha),
+      Estatus,
+      Descripcion,
+      Salario,
+      Horas_Extra,
+      Seguro,
+      Vacaciones,
+      Comentarios,
+    });
+
+    res.status(201).json({
+      message: "Auditoría creada exitosamente",
+      auditoriaId: result.insertedId,
+    });
+  } catch (err) {
+    console.error("Error al crear la auditoría:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+app.get("/auditorias", authenticateToken, async (req, res) => {
+  try {
+    const auditorias = await db.collection("auditorias").find().toArray();
+    res.status(200).json({ success: true, data: auditorias });
+  } catch (err) {
+    console.error("Error fetching auditors:", err);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
+
+app.get("/auditorias/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params; // ID de la auditoría a buscar
+
+  try {
+    // Validar el ID
+    if (!id) {
+      return res.status(400).json({ error: "ID de auditoría no proporcionado" });
+    }
+
+    // Buscar la auditoría en la base de datos
+    const auditoria = await db.collection("auditorias").findOne({ _id: new ObjectId(id) });
+
+    if (!auditoria) {
+      return res.status(404).json({ error: "Auditoría no encontrada" });
+    }
+
+    res.status(200).json(auditoria);
+  } catch (err) {
+    console.error("Error al obtener la auditoría:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 
 // Authentication Middleware
 
