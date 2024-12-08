@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -461,10 +460,9 @@ app.get("/empresas",authenticateToken, async (req, res) => {
 
 // Get Empresa by ID
 app.get("/empresas/:id",authenticateToken, async (req, res) => {
-  const { id } = req.params;
-
+  const empresaId = req.params.id;
   try {
-    const empresa = await db.collection("empresas").findOne({ _id: new ObjectId(id) });
+    const empresa = await db.collection("empresas").findOne({_id: new ObjectId(empresaId) });
 
     if (!empresa) {
       return res.status(404).json({ error: "Empresa not found" });
@@ -497,7 +495,7 @@ app.put("/empresas/:id",authenticateToken, async (req, res) => {
     }
 
     // Ensure the empresa exists
-    const empresa = await db.collection("empresas").findOne({ _id: new MongoClient.ObjectId(empresaId) });
+    const empresa = await db.collection("empresas").findOne({ _id: new ObjectId(empresaId) });
     if (!empresa) {
       return res.status(404).json({ error: "Empresa not found" });
     }
@@ -531,17 +529,27 @@ app.put("/empresas/:id",authenticateToken, async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-
 app.post("/solicitudes", authenticateToken, async (req, res) => {
   const { ID_Auditor, Fecha, Detalles } = req.body;
-  const ID_Empresa = req.user.userId; // Extract the ID of the logged-in user
-
+  const userId = req.user.userId; // Extract the ID of the logged-in user
+  console.log("Request body:", req.body); // Log the incoming data
+  console.log("User ID:", req.user.userId); // Log the user ID from the token
   try {
-    if (!ID_Empresa || !ID_Auditor || !Fecha || !Detalles) {
+    // Validate required fields
+    if (!userId || !ID_Auditor || !Fecha || !Detalles) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    // Fetch the Empresa record based on UsuarioId
+    const empresa = await db.collection("empresas").findOne({UsuarioId: new ObjectId(userId)});
+
+    if (!empresa) {
+      return res.status(404).json({ error: "Empresa not found for the logged-in user" });
+    }
+
+    const ID_Empresa = empresa._id.toString(); // Use the actual _id from the empresa collection
+
+    // Insert the solicitud with the correct Empresa ID
     const result = await db.collection("solicitudes").insertOne({
       ID_Empresa,
       ID_Auditor,
@@ -554,51 +562,112 @@ app.post("/solicitudes", authenticateToken, async (req, res) => {
       solicitudId: result.insertedId,
     });
   } catch (err) {
-    console.error(err);
+    console.error("Error creating solicitud:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 app.get("/solicitudes", authenticateToken, async (req, res) => {
-  const { userId, role } = req.user; // Extract userId and role from the token
-
+  const { userId, role } = req.user;
+  console.log(role);
   try {
+    // Initialize filter based on user role
     let filter = {};
+    let userEntity = null;
+
     if (role === "Empresa") {
-      // Filter by Empresa's user ID
-      filter = { ID_Empresa: userId };
+      // Find Empresa associated with the logged-in user
+      userEntity = await db.collection("empresas").findOne({ UsuarioId: new ObjectId(userId) });
+      if (!userEntity) {
+        return res.status(404).json({ error: "Empresa not found. Please ensure registration is complete." });
+      }
+      filter = { ID_Empresa: userEntity._id.toString() };
     } else if (role === "Auditor") {
-      // Filter by Auditor's user ID
-      filter = { ID_Auditor: userId };
+      // Find Auditor associated with the logged-in user
+      userEntity = await db.collection("auditores").findOne({ UsuarioId: new ObjectId(userId) });
+      if (!userEntity) {
+        return res.status(404).json({ error: "Auditor not found. Please ensure registration is complete." });
+      }
+      filter = { ID_Auditor: userEntity._id.toString() };
+    }
+    console.log(filter);
+    // Fetch solicitudes using the determined filter
+    const solicitudes = await db.collection("solicitudes").find(filter).toArray();
+    if (solicitudes.length === 0) {
+      return res.status(200).json([]); // Return empty array if no solicitudes found
     }
 
-    const solicitudes = await db.collection("solicitudes").find(filter).toArray();
-    res.status(200).json(solicitudes);
+    // Collect IDs for related Auditors and Empresas
+    const auditorIds = solicitudes.map((s) => new ObjectId(s.ID_Auditor));
+    const empresaIds = solicitudes.map((s) => new ObjectId(s.ID_Empresa));
+    console.log(auditorIds);
+    // Fetch related Auditor and Empresa details in parallel
+    let auditores = [];
+    let empresas = [];
+    try {
+      [auditores, empresas] = await Promise.all([
+        db.collection("auditores").find({ _id: { $in: auditorIds } }).toArray(),
+        db.collection("empresas").find({ _id: { $in: empresaIds } }).toArray(),
+      ]);
+    } catch (fetchError) {
+      console.error("Error fetching related entities:", fetchError);
+      return res.status(500).json({ error: "Error fetching related entities" });
+    }
+
+
+    // Map Auditor and Empresa names by their IDs
+    const auditorMap = Object.fromEntries(auditores.map((a) => [a._id.toString(), a.Nombre_Auditor || "Unknown"]));
+    const empresaMap = Object.fromEntries(empresas.map((e) => [e._id.toString(), e.Nombre_Empresa || "Unknown"]));
+
+    // Enhance solicitudes with related names
+    const solicitudesWithNames = solicitudes.map((solicitud) => ({
+      ...solicitud,
+      AuditorName: auditorMap[solicitud.ID_Auditor] || "Unknown",
+      EmpresaName: empresaMap[solicitud.ID_Empresa] || "Unknown",
+    }));
+        console.log("Filter:", filter);
+    console.log("Solicitudes:", solicitudes);
+    console.log("Auditor IDs:", auditorIds);
+    console.log("Empresa IDs:", empresaIds);
+
+    console.log("Solicitudes with names:", solicitudesWithNames);
+    res.status(200).json(solicitudesWithNames);
   } catch (err) {
-    console.error("Error fetching solicitudes:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching solicitudes:", err.message);
+    return res.status(500).json({ error: "Internal Server Error: " + err.message });
   }
+  
 });
 
+
 app.get("/solicitudes/:id", authenticateToken, async (req, res) => {
-  const solicitudId = req.params.id;
+  const { id } = req.params;
 
   try {
-    const solicitud = await db.collection("solicitudes").findOne({
-      _id: new MongoClient.ObjectId(solicitudId),
-    });
+    const solicitud = await db.collection("solicitudes").findOne({ _id: new ObjectId(id) });
 
     if (!solicitud) {
       return res.status(404).json({ error: "Solicitud not found" });
     }
 
-    res.status(200).json(solicitud);
-  } catch (err) {
-    console.error("Error fetching solicitud by ID:", err);
+    // Fetch related Auditor and Empresa in parallel
+    const [empresa, auditor] = await Promise.all([
+      db.collection("empresas").findOne({ _id: new ObjectId(solicitud.ID_Empresa) }),
+      db.collection("auditores").findOne({ _id: new ObjectId(solicitud.ID_Auditor) }),
+    ]);
+
+    res.status(200).json({
+      ...solicitud,
+      EmpresaName: empresa?.Nombre_Empresa || "Unknown",
+      AuditorName: auditor?.Nombre_Auditor || "Unknown",
+    });
+  } catch (error) {
+    console.error("Error fetching solicitud details:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
 
 app.delete("/solicitudes/:id", authenticateToken, async (req, res) => {
   const solicitudId = req.params.id;

@@ -13,7 +13,6 @@ import {
 import { NavLink, useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, toggleSidebar, isMobileOpen,toggleMobileSidebar }) => {
-  // eslint-disable-next-line no-undef
   const [username, setUsername] = useState();
   const navigate = useNavigate();
 useEffect(() => {

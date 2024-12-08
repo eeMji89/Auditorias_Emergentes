@@ -8,75 +8,35 @@ const SolicitudTable = () => {
   const navigate = useNavigate();
   const [solicitudes, setSolicitudes] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [vistaEmpresa, setVistaEmpresa] = useState([]); 
-  const [userRole, setUserRole] = useState([]);
+  const [userRole, setUserRole] = useState("");
+  const [isEmpresa, setIsEmpresa] = useState(false);
 
 
   useEffect(() => {
-    const fetchUserRole = async () => {
+    const fetchUserAndSolicitudes = async () => {
       try {
-        // Fetch user role
+        // Fetch user profile to get role
         const userRoleResponse = await fetchUserProfile();
         const role = userRoleResponse.data.role;
         console.log("User Role:", role);
-        setUserRole(role);
-        if (userRole === "Empresa") {
-          setVistaEmpresa(true);
-        } else if (userRole === "Auditor") {
-          setVistaEmpresa(false);
-        }
-      } catch (error) {
-        console.error("Error fetching user role:", error);
-      }
-    };
 
-      fetchUserRole();
-    }, [userRole]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch user role
-        const userRoleResponse = await fetchUserProfile();
-        const role = userRoleResponse.data.role;
-        console.log("User Role:", role);
         setUserRole(role);
-        if (userRole === "Empresa") {
-          setVistaEmpresa(true);
-        } else if (userRole === "Auditor") {
-          setVistaEmpresa(false);
-        }
-  
-        // Fetch solicitudes
+        setIsEmpresa(role === "Empresa");
+
+        // Fetch solicitudes from the backend
         const solicitudesResponse = await getSolicitudes();
-        if (solicitudesResponse.status !== 200) {
-          throw new Error(`HTTP error! Status: ${solicitudesResponse.status}`);
+        if (solicitudesResponse.status === 200) {
+          setSolicitudes(solicitudesResponse.data);
+        } else {
+          console.error("Failed to fetch solicitudes:", solicitudesResponse);
         }
-  
-        // Process solicitudes with role-based logic
-        const solicitudesWithNames = await Promise.all(
-          solicitudesResponse.data.map(async (solicitud) => {
-            let Name = "";
-            if (userRole === "Empresa") {
-              const auditorResponse = await fetchAuditorById(solicitud.ID_Auditor);
-              Name = auditorResponse.data.Nombre_Auditor;
-            } else if (userRole === "Auditor") {
-              const empresaResponse = await getEmpresaById(solicitud.ID_Empresa);
-              Name = empresaResponse.data.Nombre_Empresa;
-            }
-            console.log(Name);
-            return { ...solicitud, Name };
-          })
-        );
-  
-        setSolicitudes(solicitudesWithNames);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-  
-    fetchData();
-  }, [userRole]); 
+
+    fetchUserAndSolicitudes();
+  }, []);
   
   const handleRowSelection = (id) => {
     setSelectedRows((prevSelectedRows) =>
@@ -127,7 +87,7 @@ const SolicitudTable = () => {
             <span className="font-medium">Borrar</span>
           </button>
           )}
-          {vistaEmpresa && (
+          {isEmpresa && (
             <button
               onClick={handleNuevaSolicitud}
               className="bg-blue-500 text-white px-3 py-2  rounded hover:bg-blue-600">
@@ -153,7 +113,7 @@ const SolicitudTable = () => {
             <th className="border border-gray-300 px-4 py-2">Fecha </th>
             <th className="border border-gray-300 px-4 py-2">ID de Solicitud</th>
             <th className="border border-gray-300 px-4 py-2">
-              {userRole=="Empresa"?"Auditor": "Empresa"}
+             {isEmpresa ? "Auditor" : "Empresa"}
               </th>            
             <th className="border border-gray-300 px-4 py-2">Detalles</th>
           </tr>
@@ -174,7 +134,7 @@ const SolicitudTable = () => {
               </td>
               <td className="border border-gray-300 px-4 py-2">{solicitud._id}</td>
               <td className="border border-gray-300 px-4 py-2">
-                {solicitud.Name}
+              {isEmpresa ? solicitud.AuditorName : solicitud.EmpresaName}
                 </td>                        
               <td className="border border-gray-300 px-4 py-2">{solicitud.Detalles}</td> 
             </tr>
