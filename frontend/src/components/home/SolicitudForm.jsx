@@ -1,6 +1,8 @@
 import React, { useState,useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createSolicitud } from "../../api/Solicitudes";
+import {fetchNotifications,createNotification} from "../../api/Usuarios";
+import { toast } from "react-toastify";
 
 const SolicitudForm = () => {
   const navigate = useNavigate();
@@ -31,12 +33,20 @@ const SolicitudForm = () => {
     try {
       // Call the API to create the solicitud
       const response = await createSolicitud(formData);
-      alert("Solicitud creada con éxito!");
+      toast.success("Solicitud creada con éxito!");
       console.log("Solicitud creada:", response.data);
-      navigate("/home/solicitudes"); // Redirect after submission
+      const notificationPayload = {
+        recipientId: auditor._id,
+        message: `Se ha enviado una nueva solicitud para usted: ${formData.Detalles}`,
+        type: "Nueva Solicitud",
+      };
+  
+      await createNotification(notificationPayload); // Use the API abstraction
+      console.log("Notificación enviada al auditor.");
+      navigate("/home/solicitudes"); 
     } catch (error) {
       console.error("Error creating solicitud:", error);
-      alert("Error al crear la solicitud. Inténtelo de nuevo.");
+      toast.error("Error al crear la solicitud o enviar la notificación. Inténtelo de nuevo.");
     }
   };
 

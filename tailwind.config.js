@@ -8,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        'custom-bg': "url('/src/assets/FONDO.png')",
+      },
       colors: {
         "brandPrimary": "#4CAF4F",
         "neutralDGrey": "#4D4D4D",

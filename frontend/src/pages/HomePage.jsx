@@ -9,12 +9,13 @@ import SolicitudForm from "../components/home/SolicitudForm";
 import SolicitudTable from "../components/home/Solicitudes";
 import PerfilAuditor from "../components/home/PerfilAuditor";
 import AuditoresDisponibles from "../components/home/AuditoresDisponibles";
-import ResetPassword from "../components/home/ResetPassword";
+import ResetPasswordForm from "../components/home/ResetPassword";
 import TerminosCondiciones from "../components/home/TerminosCond";
 import SoporteContacto from "../components/home/Soporte";
 import UserProfile from "../components/home/EditProfile";
 import Notifications from "../components/home/Notifications";
 import SolicitudDetail from "../components/home/DetallesSolicitud";
+import AuditoriaDetail from "../components/home/DetallesAuditoria";
 const UserPage = () => {
     return (
         <UserLayout>           
@@ -27,7 +28,8 @@ const UserPage = () => {
             <Route path="solicitudes/perfil-auditor/:id" element={<PerfilAuditor/>} /> 
             <Route path="solicitudes/auditores-disponibles" element={<AuditoresDisponibles/>} /> 
             <Route path="solicitudes/detalles/:id" element={<SolicitudDetail/>} />
-            <Route path="configurar-contraseña" element={<ResetPassword/>} /> 
+            <Route path="auditorias/detalles/:id" element={<AuditoriaDetail/>} />  
+            <Route path="configurar-contraseña" element={<ResetPasswordForm/>} /> 
             <Route path="terminos-condiciones" element={<TerminosCondiciones/>} /> 
             <Route path="soporte-contacto" element={<SoporteContacto/>} /> 
             <Route path="perfilUsuario" element={<UserProfile/>} /> 

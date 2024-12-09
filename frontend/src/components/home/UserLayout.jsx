@@ -2,6 +2,7 @@ import React , { useState , useEffect } from "react";
 import logo from '../../assets/logo.png'
 import Sidebar from "./Sidebar";
 import { FaBars } from "react-icons/fa";
+import FONDO from '../../assets/Fondo.png';
 // eslint-disable-next-line react/prop-types
 const UserLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // For large screens
@@ -17,7 +18,14 @@ const UserLayout = ({ children }) => {
  
 
   return (
-    <div className="min-h-screen flex bg-neutralSilver">
+    <div className="min-h-screen flex bg-neutralSilver"
+    style={{
+      backgroundImage: `url(${FONDO})`, // Add your image here
+      backgroundSize: "cover", // Adjust the image size
+      backgroundPosition: "center", // Center the image
+      backgroundRepeat: "no-repeat", // Avoid tiling the image
+    }}
+    >
       <Sidebar isOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
         isMobileOpen={isMobileOpen}
@@ -26,7 +34,7 @@ const UserLayout = ({ children }) => {
       {/* Main Content */}
       <div className="flex-grow flex flex-col">
         {/* Header */}
-        <header className= {` ${isMobileOpen? "hidden" : '' } static bg-green-800 py-2 shadow-md flex items-center w-full justify-between px-6`}>
+        <header className= {` ${isMobileOpen? "hidden" : '' } bg-green-800 py-2 shadow-md flex items-center w-full justify-between px-6`}>
           {/* Mobile Sidebar Toggle */}
           <button
             onClick={toggleMobileSidebar}

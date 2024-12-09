@@ -3,11 +3,13 @@ import axios from "axios";
 import { login } from "../api/auth";
 import AuthLayout from "../components/AuthLayout";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 
 const LoginPage = () => {
-  const [usuario, setUsuario] = useState(""); // State for the username
-  const [contraseña, setContraseña] = useState(""); // State for the password
-  const [error, setError] = useState(""); // State for error handling
+  const [usuario, setUsuario] = useState(""); 
+  const [contraseña, setContraseña] = useState("");
+  const [error, setError] = useState(""); 
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
     username: "",
@@ -25,15 +27,13 @@ const LoginPage = () => {
     setContraseña(value);
   }
 
-  // Update form data for display purposes
   setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Real-time password validation
     if (name === "password") {
       if (value.length < 8) {
         setPasswordError("La contraseña debe tener al menos 8 caracteres.");
       } else {
-        setPasswordError(""); // Clear error when valid
+        setPasswordError(""); 
       }
     }
   };
@@ -52,15 +52,14 @@ const LoginPage = () => {
         Contrasena: contraseña,
       });
   
-      // Successful login
       const { token } = response.data;
-      localStorage.setItem("token", token); // Store the JWT token
-      alert("Inicio de sesión exitoso"); // Optional: Inform user
-      navigate("/home"); // Redirect to home
+      localStorage.setItem("token", token); 
+      toast.success("Inicio de sesión exitoso");
+
+      navigate("/home"); 
     } catch (err) {
-      // Handle errors
       if (err.response && err.response.data) {
-        setError(err.response.data.error); // Set specific error message
+        setError(err.response.data.error); 
       } else {
         setError("Error del servidor. Inténtalo más tarde.");
       }

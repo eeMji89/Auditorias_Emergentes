@@ -15,3 +15,5 @@ export const updateEmpresa = (id, data) => api.put(`/empresas/${id}`, data);
 export const fetchNotifications = () => api.get('/notifications');
 
 export const markNotificationAsRead = (id) => api.put(`/notifications/${id}`);
+
+export const createNotification = (data) => api.post("/notifications",data);

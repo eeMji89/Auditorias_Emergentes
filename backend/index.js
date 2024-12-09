@@ -26,7 +26,8 @@ const contractABI = [
   { "inputs": [{ "internalType": "bool", "name": "_isValid", "type": "bool" }], "name": "setValidity", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
 ];
 
-const provider = new ethers.JsonRpcProvider(process.env.RPC_URL); L
+
+const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
 const privateKey = process.env.PRIVATE_KEY; 
 const wallet = new ethers.Wallet(privateKey, provider);
 
@@ -202,9 +203,35 @@ const upload = multer({storage}); // Allow up to 10 files
   
   app.get("/notifications", authenticateToken, async (req, res) => {
     try {
+      // Fetch the logged-in user's details to determine their role
+      const user = await db.collection("usuarios").findOne({ _id: new ObjectId(req.user.userId) });
+  
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+  
+      // Determine whether the user is an Empresa or Auditor
+      let recipientId;
+      if (user.Rol === "Empresa") {
+        const empresa = await db.collection("empresas").findOne({ UsuarioId: new ObjectId(user._id) });
+        if (!empresa) {
+          return res.status(404).json({ error: "Empresa not found for this user" });
+        }
+        recipientId = empresa._id.toString();
+      } else if (user.Rol === "Auditor") {
+        const auditor = await db.collection("auditores").findOne({ UsuarioId: new ObjectId(user._id) });
+        if (!auditor) {
+          return res.status(404).json({ error: "Auditor not found for this user" });
+        }
+        recipientId = auditor._id.toString();
+      } else {
+        return res.status(400).json({ error: "Invalid user role" });
+      }
+  
+      // Fetch notifications for the determined recipientId
       const notifications = await db
         .collection("notifications")
-        .find({ recipientId: req.user.userId })
+        .find({ recipientId })
         .sort({ createdAt: -1 })
         .toArray();
   
@@ -214,6 +241,7 @@ const upload = multer({storage}); // Allow up to 10 files
       res.status(500).json({ error: "Internal Server Error" });
     }
   });
+  
 
   app.put("/notifications/:id", authenticateToken, async (req, res) => {
     const { id } = req.params;
@@ -232,8 +260,7 @@ const upload = multer({storage}); // Allow up to 10 files
   
   
 
-  app.put("/update-password/:id", async (req, res) => {
-    const userId = req.params.id; // User ID from the URL parameter
+  app.put("/update-password",authenticateToken, async (req, res) => {
     const { currentPassword, newPassword } = req.body;
   
     try {
@@ -247,7 +274,8 @@ const upload = multer({storage}); // Allow up to 10 files
       }
   
       // Find the user
-      const user = await db.collection("usuarios").findOne({ _id: new MongoClient.ObjectId(userId) });
+      const userId = new ObjectId(req.user.userId); 
+      const user = await db.collection("usuarios").findOne({ _id: userId });
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
@@ -263,7 +291,7 @@ const upload = multer({storage}); // Allow up to 10 files
   
       // Update the password
       await db.collection("usuarios").updateOne(
-        { _id: new MongoClient.ObjectId(userId) },
+        { _id: new ObjectId(userId) },
         { $set: { Contrasena: hashedPassword } }
       );
   
@@ -276,7 +304,7 @@ const upload = multer({storage}); // Allow up to 10 files
   
   
   app.post("/logout", async (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1]; // Extract token from Authorization header
+    const token = req.headers.authorization?.split(" ")[1]; 
     if (!token) {
       return res.status(400).json({ error: "Token missing from request" });
     }
@@ -748,7 +776,7 @@ app.delete("/solicitudes/:id", authenticateToken, async (req, res) => {
 
   try {
     const result = await db.collection("solicitudes").deleteOne({
-      _id: new MongoClient.ObjectId(solicitudId),
+      _id: new ObjectId(solicitudId),
     });
 
     if (result.deletedCount === 0) {

@@ -4,6 +4,8 @@ import RegisterChoice from "../components/RegisterChoser";
 import RegisterComplete from "../components/RegisterComplete";
 import AuthLayout from "../components/AuthLayout";
 import { register } from "../api/auth";
+import { toast } from "react-toastify";
+
 
 
 const RegisterPage = () => {
@@ -52,11 +54,12 @@ const RegisterPage = () => {
       
       const response = await register (formDataToSend);      
         console.log("Registration successful:",response.data);
-        alert("User registered successfully!");
+        toast.success("Usuario Registrado con éxito!");
+
     
     } catch (error) {
       console.error("Error during registration:", error);
-      alert("Ocurrió un error. Inténtalo de nuevo.");
+      toast.error("Ocurrió un error. Inténtalo de nuevo.");
     }
   };
   
