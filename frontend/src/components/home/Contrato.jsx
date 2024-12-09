@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getContratosById } from "../../api/Contratos"; // Import your API function
+import { getContratosById } from "../../api/Contratos";
+import { useLocation } from "react-router-dom"; // Import your API function
 
 const Contrato = () => {
-  const { id } = useParams(); // Get the contract ID from route parameters
+  const { id } = useParams(); 
+  const location = useLocation();
+  console.log("Contrato data received:", location.state);
+  const Contract = location.state?.contractData; 
   const [contract, setContract] = useState(null);
+  
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchContract = async () => {
       try {
+        console.log(id);
         const response = await getContratosById(id);
         setContract(response.data);
       } catch (err) {
@@ -19,7 +25,9 @@ const Contrato = () => {
     };
 
     fetchContract();
-  }, [id]);
+  }, []);
+
+ 
 
   if (error) {
     return <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl p-8">{error}</div>;
