@@ -56,7 +56,7 @@ const AuditoriaTable = () => {
   };
 
   return (
-    <div className="p-6 shadow-lg md:w-11/12 w-[360px] mx-auto bg-white rounded-lg overflow-x-auto">
+    <div className="p-6 shadow-lg md:w-11/12 w-[360px] mx-auto bg-white rounded-lg overflow-x-auto absolute top-32">
       {/* Header with buttons */}
       <div className="flex justify-between items-center mb-4 ">
         <h1 className="lg:text-2xl font-bold sm:text-md">Auditorías Activas</h1>
@@ -117,11 +117,11 @@ const AuditoriaTable = () => {
                   checked={selectedRows.includes(auditoria.id)}
                   onChange={() => handleRowSelection(auditoria.id)}/>
               </td>
-              <td className="border border-gray-300 px-4 py-2">{auditoria.id}</td>
-              <td className="border border-gray-300 px-4 py-2">{auditoria.empresa}</td>
-              <td className="border border-gray-300 px-4 py-2">{auditoria.industria}</td>
-              <td className="border border-gray-300 px-4 py-2">{auditoria.fecha}</td>            
-              <td className="border border-gray-300 px-4 py-2">
+              <td className="border border-gray-300 px-4 py-4">{auditoria.id}</td>
+              <td className="border border-gray-300 px-4 py-4">{auditoria.empresa}</td>
+              <td className="border border-gray-300 px-4 py-4">{auditoria.industria}</td>
+              <td className="border border-gray-300 px-4 py-4">{auditoria.fecha}</td>            
+              <td className="border border-gray-300 px-4 py-4">
                 <div className="flex items-center space-x-2">
                     <span
                     className={`w-2 h-2 rounded-full ${

@@ -59,7 +59,7 @@ const SolicitudTable = () => {
   };
 
   const handleDeleteSelected = async () => {
-    if (window.confirm("¿Estás seguro de eliminar las auditorías seleccionadas?")) {
+    if (window.confirm("¿Estás seguro de eliminar las Solicitudes seleccionadas?")) {
       const token = localStorage.getItem("token");
       try {
         await Promise.all(
@@ -81,7 +81,7 @@ const SolicitudTable = () => {
   };
 
   return (
-    <div className="p-6 shadow-lg sm:w-11/12 w-[360px] mx-auto bg-white rounded-lg overflow-x-auto">
+    <div className="p-6 shadow-lg md:w-9/12 w-11/12 mx-auto bg-white rounded-lg overflow-x-auto absolute top-32">
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <FaSpinner className="text-4xl text-gray-500 animate-spin" />
@@ -125,7 +125,7 @@ const SolicitudTable = () => {
                   checked={selectedRows.length === solicitudes.length && solicitudes.length > 0}
                 />
               </th>
-              <th className="border border-gray-300 px-4 py-2">Fecha </th>
+              <th className="border border-gray-300 px-10 py-2">Fecha </th>
               <th className="border border-gray-300 px-4 py-2">ID de Solicitud</th>
               <th className="border border-gray-300 px-4 py-2">
               {isEmpresa ? "Auditor" : "Empresa"}
@@ -141,8 +141,8 @@ const SolicitudTable = () => {
                 <td className="border border-gray-300 px-4 py-2">
                   <input
                     type="checkbox"
-                    checked={selectedRows.includes(solicitud.id)}
-                    onChange={() => handleRowSelection(solicitud.id)}/>
+                    checked={selectedRows.includes(solicitud._id)}
+                    onChange={() => handleRowSelection(solicitud._id)}/>
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {new Date(solicitud.Fecha).toISOString().split("T")[0]}

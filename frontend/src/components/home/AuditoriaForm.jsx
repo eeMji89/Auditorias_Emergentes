@@ -1,11 +1,28 @@
 
-import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { createAuditoria } from "../../api/Auditorias";
+import { fetchUserProfile } from "../../api/auth";
 
 const AuditoriaForm = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { solicitud } = location.state || {};
+
   const [formData, setFormData] = useState({
-    empresa: "",
-    auditor: "",
+    ID_Auditor: solicitud?.ID_Auditor || "",
+    ID_Empresa: solicitud?.ID_Empresa || "", 
+    empresa: solicitud?.EmpresaName || "",
+    Fecha: new Date(solicitud.Fecha).toISOString().split("T")[0],
+    Estatus: "Active", // Default status
+    Descripcion: "",
+    Salario: "",
+    Horas_Extra: "",
+    Seguro: "",
+    Vacaciones: "",
+    Comentarios: "",
+    auditor: solicitud?.AuditorName|| "",
     fecha: "",
     descripcion: "", // Updated field
     salario: "",
@@ -52,22 +69,20 @@ const AuditoriaForm = () => {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl p-8">
+    <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl p-8 ">
       <h1 className="text-2xl font-bold mb-4">Nueva Auditoría</h1>
       <form onSubmit={handleSubmit} className="space-y-6 ">
       <h1 className="font-bold text-neutralDGrey">Información Basica</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">            
           <div>
             <label className="block font-bold mb-2">Nombre de la Empresa</label>
-            <select
+            <input
+              type="text"
               name="empresa"
               value={formData.empresa}
-              onChange={handleChange} 
-              className="w-full px-4 py-2 border rounded">
-              <option value="">Seleccione</option>
-              <option value="Empresa 1">Empresa 1</option>
-              <option value="Empresa 2">Empresa 2</option>
-            </select>
+              readOnly
+              disabled
+              className="w-full px-4 py-2 border rounded"/>
           </div>
           <div>
             <label className="block font-bold mb-2">Auditor Responsable</label>
@@ -75,17 +90,19 @@ const AuditoriaForm = () => {
               type="text"
               name="auditor"
               value={formData.auditor}
-              onChange={handleChange}
+              readOnly
+              disabled
               className="w-full px-4 py-2 border rounded"
-              placeholder="Nombre del Auditor" />
+            />
           </div>
           <div>
             <label className="block font-bold mb-2">Fecha</label>
             <input
               type="date"
-              name="fecha"
-              value={formData.fecha}
-              onChange={handleChange}
+              name="Fecha"
+              value={formData.Fecha}
+              readOnly
+              disabled
               className="w-full px-4 py-2 border rounded"/>
           </div>
           <span></span>

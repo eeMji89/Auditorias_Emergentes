@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { fetchUserProfile } from "../../api/auth"; // API to get user profile
 import { fetchAuditorById, getEmpresaById } from "../../api/Usuarios"; // API to fetch Auditor/Empresa data
 import { useNavigate } from "react-router-dom";
+import { FiEdit } from "react-icons/fi";
 
 const UserProfile = () => {
   const [userData, setUserData] = useState(null);
@@ -18,7 +19,7 @@ const UserProfile = () => {
         const userResponse = await fetchUserProfile();
         const { ID, role } = userResponse.data;
         setUserData(userResponse.data);
-        console.log(ID, role);
+
         let profileResponse;
         if (role === "Auditor") {
           profileResponse = await fetchAuditorById(ID); // Fetch auditor details
@@ -72,9 +73,9 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="max-w-screen w-11/12 mx-auto bg-white shadow-md rounded-lg overflow-hidden">
       {/* Profile Header */}
-      <div className="flex items-center p-6 bg-green-800 text-white">
+      <div className="flex items-center p-6 bg-green-800 text-white relative" >
         <img
           src="https://via.placeholder.com/150" // Replace with actual image URL
           alt="User Profile"
@@ -84,79 +85,82 @@ const UserProfile = () => {
           <h1 className="text-2xl font-bold">
             {profileData.Nombre_Auditor || profileData.Nombre_Empresa || "Usuario"}
           </h1>
-          <p className="text-sm">{userData?.role}</p>
+          <p className="text-sm">Nombre de Usuario: {userData?.username}</p>
+        </div>
+         {/* Edit Icon */}
+         <div className="">
+          <button
+          onClick={() => setEditMode(!editMode)}
+          className="absolute top-6 right-6 bg-white text-green-800 p-2 rounded-full hover:bg-gray-200"
+          >
+          <FiEdit size={20} />
+         </button>
+         </div>        
+      </div>
+
+      {/* General Data Section */}
+      <div className="p-6 space-y-4 border-b grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h2 className="text-lg font-bold text-gray-700">Datos Generales</h2>
+        <span></span>
+        <div>
+          <p className="text-sm font-bold text-gray-700">Correo Electrónico:</p>
+          <p className="text-gray-800">{profileData.Correo_Electronico}</p>
+        </div>
+        <div>
+          <p className="text-sm font-bold text-gray-700">Teléfono:</p>
+          <p className="text-gray-800">{profileData.Telefono}</p>
         </div>
       </div>
 
-      {/* Profile Details */}
-      <div className="p-6 space-y-4">
-        {userData.role === "Auditor" && (
-          <>
-            <div>
-              <p className="text-sm font-bold text-gray-700">Especialización:</p>
-              {editMode ? (
-                <input
-                  type="text"
-                  name="Especializacion"
-                  value={profileData.Especializacion}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded"
-                />
-              ) : (
-                <p className="text-gray-800">{profileData.Especializacion}</p>
-              )}
+      {/* Role-Specific Section */}
+      {userData.role === "Auditor" && (
+        <div className="p-6 space-y-4 border-b ">
+          <h2 className="text-lg font-bold text-gray-700">Datos del Auditor</h2>
+          <div>
+            <p className="text-sm font-bold text-gray-700">Especialización:</p>
+            <p className="text-gray-800">{profileData.Especializacion}</p>
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-gray-700 pb-2">Certificaciones:</h2>
+            <div className="flex flex-wrap gap-4">
+              {profileData.Certificaciones.map((cert, index) => (
+                <div key={index} className="border p-4">
+                  {cert.fileType === "application/pdf" ? (
+                    <a href={cert.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+                      Ver PDF
+                    </a>
+                  ) : (
+                    <img src={cert.fileUrl} alt={cert.fileName} className="w-32 h-32 object-cover" />
+                  )}
+                </div>
+              ))}
             </div>
-            <div>
-              <h2 className="text-sm font-bold text-gray-700 pb-2">Certificaciones:</h2>
-              <div className="flex flex-wrap gap-4">
-                {profileData.Certificaciones.map((cert, index) => (
-                  <div key={index} className="border p-4">
-                    {cert.fileType === "application/pdf" ? (
-                      <a href={cert.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500">
-                        Ver PDF
-                      </a>
-                    ) : (
-                      <img src={cert.fileUrl} alt={cert.fileName} className="w-32 h-32 object-cover" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-        {userData.role === "Empresa" && (
-          <>
-            <div>
-              <p className="text-sm font-bold text-gray-700">Nombre del Representante:</p>
-              {editMode ? (
-                <input
-                  type="text"
-                  name="Nombre_Representante"
-                  value={profileData.Nombre_Representante}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded"
-                />
-              ) : (
-                <p className="text-gray-800">{profileData.Nombre_Representante}</p>
-              )}
-            </div>
-            <div>
-              <p className="text-sm font-bold text-gray-700">Ubicación:</p>
-              {editMode ? (
-                <input
-                  type="text"
-                  name="Ubicacion"
-                  value={profileData.Ubicacion}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded"
-                />
-              ) : (
-                <p className="text-gray-800">{profileData.Ubicacion}</p>
-              )}
-            </div>
-          </>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
+
+      {userData.role === "Empresa" && (
+        <div className="p-6 space-y-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h2 className="text-lg font-bold text-gray-700">Datos de la Empresa</h2>
+          <span></span>
+          <div>
+            <p className="text-sm font-bold text-gray-700">Nombre del Representante:</p>
+            <p className="text-gray-800">{profileData.Nombre_Representante}</p>
+          </div>
+          <div>
+            <p className="text-sm font-bold text-gray-700">Ubicación:</p>
+            <p className="text-gray-800">{profileData.Ubicacion}</p>
+          </div>
+          <div>
+            <p className="text-sm font-bold text-gray-700">Tipo:</p>
+            <p className="text-gray-800">{profileData.Tipo}</p>
+          </div>
+          <div>
+            <p className="text-sm font-bold text-gray-700">Numero de Registro:</p>
+            <p className="text-gray-800">{profileData.No_Registro}</p>
+          </div>
+        </div>
+      )}
 
       <div className="flex justify-between md:text-lg text-xs p-4">
         {editMode ? (
@@ -178,20 +182,7 @@ const UserProfile = () => {
           </>
         ) : (
           <>
-            <button
-              type="button"
-              onClick={() => navigate("/home")}
-              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-            >
-              ← Regresar
-            </button>
-            <button
-              type="button"
-              onClick={() => setEditMode(true)}
-              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-            >
-              Editar Perfil
-            </button>
+            
           </>
         )}
       </div>
