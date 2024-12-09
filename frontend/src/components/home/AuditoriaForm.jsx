@@ -14,21 +14,22 @@ const AuditoriaForm = () => {
   const [formData, setFormData] = useState({
     ID_Auditor: solicitud?.ID_Auditor || "",
     ID_Empresa: solicitud?.ID_Empresa || "", 
-    empresa: solicitud?.EmpresaName || "",
+    Empresa: solicitud?.EmpresaName || "",
     Fecha: new Date(solicitud.Fecha).toISOString().split("T")[0],
-    Estatus: "Active", 
-    Descripcion: "",
+    Estatus: "Active", // Default status
+    Auditor: solicitud?.AuditorName|| "",
+    Fecha: "",
+    Descripcion: "", // Updated field
     Salario: "",
-    Horas_Extra: "",
-    Comentarios: "",
-    auditor: solicitud?.AuditorName|| "",
+    Objetivo: "",
+    HorasExtras: "",
     Seguro: false,
     Vacaciones: false,
     beneficios: [
         { label: "Seguro de Salud", checked: false },
         { label: "Vacaciones Pagadas", checked: false },
       ],
-    documentacion: null,
+    Documentacion: null,
   });
 
   const handleChange = (e) => {
@@ -58,25 +59,43 @@ const AuditoriaForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await createAuditoria(formData); 
+    console.log("Form Data:", formData);
+    const response = await createAuditoria(formData);
+
+    // Parse numeric and boolean values
+    const salario = parseFloat(formData.Salario);
+    const horasExtras = parseInt(formData.HorasExtras, 10);
+    const seguro = formData.Seguro;
+    const vacaciones = formData.Vacaciones;
+
+    // Validate contract conditions
+    let conditionCount = 0;
+    if (salario < 10500) conditionCount++;
+    if (!vacaciones) conditionCount++;
+    if (!seguro) conditionCount++;
+    if (horasExtras > 5) conditionCount++;
+
+    const IsValid = conditionCount < 3; 
+
     const contractData = {
-      empresa: formData.empresa,
-      auditor: formData.auditor,
-      dateCreated: new Date(),
-      isValid: true,
+      Empresa: formData.Empresa,
+      Auditor: formData.Auditor,
+      DateCreated: new Date(),
+      Salario: formData.Salario,
+      HorasExtras: formData.HorasExtras,
+      Seguro: formData.Seguro,
+      Vacaciones: formData.Vacaciones,
+      IsValid,
     };
 
     try {
-      const response = await createContrato(contractData);
+      await createContrato(contractData);
       alert("Contrato creado exitosamente!");
-      navigate("/contrato", { state: response.data });
+      navigate("home/contrato", { state: { contractData } });
     } catch (error) {
       console.error("Error al crear el contrato:", error);
       alert("Hubo un error al crear el contrato. Intenta nuevamente.");
     }
-  };
-  const handleContrato = () => {
-    navigate("/home/auditorias/contrato",formData);
   };
 
   return (
@@ -90,7 +109,7 @@ const AuditoriaForm = () => {
             <input
               type="text"
               name="empresa"
-              value={formData.empresa}
+              value={formData.Empresa}
               readOnly
               disabled
               className="w-full px-4 py-2 border rounded"/>
@@ -100,7 +119,7 @@ const AuditoriaForm = () => {
             <input
               type="text"
               name="auditor"
-              value={formData.auditor}
+              value={formData.Auditor}
               readOnly
               disabled
               className="w-full px-4 py-2 border rounded"
@@ -122,7 +141,7 @@ const AuditoriaForm = () => {
           <div>
             <label className="block font-bold mb-2">Descripción</label> {/* Updated label */}
             <textarea
-              name="Descripcion"
+              name="descripcion"
               value={formData.Descripcion}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded"
@@ -132,7 +151,7 @@ const AuditoriaForm = () => {
             <label className="block font-bold mb-2">Salario Base</label>
             <input
               type="text"
-              name="Salario"
+              name="salario"
               value={formData.Salario}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded"
@@ -140,13 +159,15 @@ const AuditoriaForm = () => {
           </div>
           <div>
             <label className="block font-bold mb-2">Pago de Horas Extras</label>
-            <input
-              type="text"
-              name="Horas_Extra"
-              value={formData.Horas_Extra}
+            <select
+              name="horasExtras"
+              value={formData.HorasExtras}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded"
-              placeholder="Ej. 5"  />
+              className="w-full px-4 py-2 border rounded" >
+              <option value="">Seleccione</option>
+              <option value="Cumple">Cumple</option>
+              <option value="No Cumple">No Cumple</option>
+            </select>
           </div>
           <div>
             <label className="block font-bold mb-2">Beneficios Adicionales</label>
@@ -154,7 +175,7 @@ const AuditoriaForm = () => {
               <label>
                 <input
                   type="checkbox"
-                  name="Seguro"
+                  name="seguro"
                   checked={formData.Seguro}
                   onChange={handleChange} />{" "}
                 Seguro de Salud
@@ -162,7 +183,7 @@ const AuditoriaForm = () => {
               <label>
                 <input
                   type="checkbox"
-                  name="Vacaciones"
+                  name="vacaciones"
                   checked={formData.Vacaciones}
                   onChange={handleChange} />{" "}
                 Vacaciones Pagadas
@@ -179,8 +200,8 @@ const AuditoriaForm = () => {
             }`}
           >
             <input {...getInputProps()} />
-            {formData.documentacion ? (
-              <p>{formData.documentacion.name}</p>
+            {formData.Documentacion ? (
+              <p>{formData.Documentacion.name}</p>
             ) : (
               <p>
                 {isDragActive
@@ -192,7 +213,6 @@ const AuditoriaForm = () => {
         </div>
         <div className=" flex py-5 items-center justify-center ">
           <button
-            onClick={handleContrato}
             type="submit"
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
             Verificar Auditoría →
