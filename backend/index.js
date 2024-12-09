@@ -881,14 +881,19 @@ app.get("/auditorias/:id", authenticateToken, async (req, res) => {
 
 app.post("/contratos", authenticateToken, async (req, res) => {
   const { userId } = req.user; // Get the authenticated user ID
-  const { auditorId, empresaId } = req.body; // IDs for the auditor and empresa
+  const { 
+    auditorId, 
+    empresaId,  
+    DateCreated,
+    IsValid
+  } = req.body; // IDs for the auditor and empresa
 
   try {
     const contract = {
-      dateCreated: new Date(),
-      isValid: true,
       auditorId,
       empresaId,
+      dateCreated: new Date(),
+      isValid: true,isValid: true,
     };
 
     const result = await db.collection("contratos").insertOne(contract);
