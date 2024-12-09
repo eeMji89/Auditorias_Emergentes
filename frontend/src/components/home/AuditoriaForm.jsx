@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { createAuditoria } from "../../api/Auditorias";
 import { fetchUserProfile } from "../../api/auth";
+import { createContrato } from "../../api/Contratos";
 
 const AuditoriaForm = () => {
   const navigate = useNavigate();
@@ -62,10 +63,26 @@ const AuditoriaForm = () => {
     maxFiles: 1,
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form Data:", formData);
     // Send the formData to the backend
+
+    const contractData = {
+      empresa: formData.empresa,
+      auditor: formData.auditor,
+      dateCreated: new Date(),
+      isValid: true,
+    };
+
+    try {
+      await createContrato(contratoData);
+      alert("Contrato creado exitosamente!");
+      navigate("/contrato", { state: response.data });
+    } catch (error) {
+      console.error("Error al crear el contrato:", error);
+      alert("Hubo un error al crear el contrato. Intenta nuevamente.");
+    }
   };
 
   return (
@@ -183,7 +200,6 @@ const AuditoriaForm = () => {
         </div>
         <div className=" flex py-5 items-center justify-center ">
           <button
-            onClick={() => navigate("/contrato")}
             type="submit"
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
             Verificar Auditoría →
