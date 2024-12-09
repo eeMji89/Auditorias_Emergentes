@@ -5,6 +5,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { createAuditoria } from "../../api/Auditorias";
 import { fetchUserProfile } from "../../api/auth";
 import { createContrato } from "../../api/Contratos";
+import { toast } from "react-toastify";
+
 
 const AuditoriaForm = () => {
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ const AuditoriaForm = () => {
     Auditor: solicitud?.AuditorName|| "",
     Descripcion: "", 
     Salario: "",
-    HorasExtras: "",
+    Horas_Extra: "",
     Seguro:{ label: "Seguro de Salud", checked: false },
     Vacaciones: { label: "Vacaciones Pagadas", checked: false },
     Comentarios: "",
@@ -58,25 +60,25 @@ const AuditoriaForm = () => {
     const IsValid = conditionCount < 3; 
 
     const contractData = {
-      Empresa: formData.ID_Empresa,
-      Auditor: formData.ID_Auditor,
+      empresaId: formData.ID_Empresa,
+      auditorId: formData.ID_Auditor,
       DateCreated: new Date(),
-      Salario: formData.Salario,
-      HorasExtras: formData.HorasExtras,
-      Seguro: formData.Seguro,
-      Vacaciones: formData.Vacaciones,
+      isValid:IsValid,
     };
 
     try {
       await createContrato(contractData);
-      alert("Contrato creado exitosamente!");
-      navigate("/contrato", { state: { contractData } });
+      console.log(contractData);
+      toast.success("Contrato creado exitosamente!");
+      handleContrato(contractData);
     } catch (error) {
       console.error("Error al crear el contrato:", error);
-      alert("Hubo un error al crear el contrato. Intenta nuevamente.");
+      toast.error("Hubo un error al crear el contrato. Intenta nuevamente.");
     }
   };
-
+  const handleContrato = (contractData) => {
+    navigate("/home/contrato", { state: { contractData } });
+  };
   return (
     <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl p-8 ">
       <h1 className="text-2xl font-bold mb-4">Nueva Auditoría</h1>
@@ -140,8 +142,8 @@ const AuditoriaForm = () => {
             <label className="block font-bold mb-2">Pago de Horas Extras</label>
             <input
               type="text"
-              name="HorasExtras"
-              value={formData.HorasExtras}
+              name="Horas_Extra"
+              value={formData.Horas_Extra}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded" 
               placeholder="Ej. 5"/>
@@ -153,7 +155,7 @@ const AuditoriaForm = () => {
                 <input
                   type="checkbox"
                   name="Seguro"
-                  checked={formData.Seguro}
+                  checked={formData.Seguro.checked}
                   onChange={handleChange} />{" "}
                 Seguro de Salud
               </label>
@@ -161,7 +163,7 @@ const AuditoriaForm = () => {
                 <input
                   type="checkbox"
                   name="Vacaciones"
-                  checked={formData.Vacaciones}
+                  checked={formData.Vacaciones.checked}
                   onChange={handleChange} />{" "}
                 Vacaciones Pagadas
               </label>
