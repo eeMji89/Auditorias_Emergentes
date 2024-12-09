@@ -35,7 +35,7 @@ const UserPage = () => {
             <Route path="soporte-contacto" element={<SoporteContacto/>} /> 
             <Route path="perfilUsuario" element={<UserProfile/>} /> 
             <Route path="notificaciones" element={<Notifications/>} />  
-            <Route path="contrato" element={<Contrato />} />     
+            <Route path="contrato/:id" element={<Contrato />} />     
             </Routes>           
         </UserLayout>
     );

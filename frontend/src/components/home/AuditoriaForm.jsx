@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { createAuditoria } from "../../api/Auditorias";
 import { fetchUserProfile } from "../../api/auth";
 import { createContrato } from "../../api/Contratos";
+import { deleteSolicitud } from "../../api/Solicitudes";
 import { toast } from "react-toastify";
 
 
@@ -45,8 +46,8 @@ const AuditoriaForm = () => {
     console.log("Auditoría :", response.data);
     console.log("Auditoría creada:", response.data);
 
-    if (solicitud?.ID_Solicitud) {
-      await deleteSolicitud(solicitud.ID_Solicitud);
+    if (solicitud?._id) {
+      await deleteSolicitud(solicitud._id);
       console.log("Solicitud deleted successfully");
     }
     
@@ -73,17 +74,17 @@ const AuditoriaForm = () => {
     };
 
     try {
-      await createContrato(contractData);
-      console.log(contractData);
+      const response = await createContrato(contractData);
+      console.log(response);
       toast.success("Contrato creado exitosamente!");
-      handleContrato(contractData);
+      handleContrato(contractData.auditorId);
     } catch (error) {
       console.error("Error al crear el contrato:", error);
       toast.error("Hubo un error al crear el contrato. Intenta nuevamente.");
     }
   };
-  const handleContrato = (contractData) => {
-    navigate("/home/contrato", { state: { contractData } });
+  const handleContrato = (id) => {
+    navigate(`/home/contrato/${id}`); // Pass contractId in the URL
   };
   return (
     <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl p-8 ">

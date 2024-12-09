@@ -941,8 +941,12 @@ app.put("/contratos/:id", authenticateToken, async (req, res) => {
 app.get("/contratos/:id", authenticateToken, async (req, res) => {
   const { id } = req.params;
 
+  if (!ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid contract ID" });
+  }
+
   try {
-    const contract = await db.collection("contratos").findOne({ _id: new ObjectId(id) });
+    const contract = await db.collection("contratos").findOne({ auditorId: id  });
 
     if (!contract) {
       return res.status(404).json({ error: "Contract not found" });

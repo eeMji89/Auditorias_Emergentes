@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getContratosById } from "../../api/Contratos";
-import { useLocation } from "react-router-dom"; // Import your API function
+import { getEmpresaById } from "../../api/Usuarios";
+import { fetchAuditorById } from "../../api/Usuarios";
 
 const Contrato = () => {
   const { id } = useParams(); 
-  const location = useLocation();
   console.log("Contrato data received:", location.state);
-  const Contract = location.state?.contractData; 
   const [contract, setContract] = useState(null);
-  
+  const [empresaName, setEmpresaName] = useState("");
+  const [auditorName, setAuditorName] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -17,7 +17,19 @@ const Contrato = () => {
       try {
         console.log(id);
         const response = await getContratosById(id);
+        const contractData = response.data;
+
         setContract(response.data);
+
+        if (contractData.empresaId) {
+          const empresaResponse = await getEmpresaById(contractData.empresaId);
+          setEmpresaName(empresaResponse.data.Nombre_Empresa); // Assuming the name is returned in `data.name`
+        }
+        if (contractData.auditorId) {
+          const auditorResponse = await fetchAuditorById(contractData.auditorId);
+          setAuditorName(auditorResponse.data.Nombre_Auditor); // Assuming the name is returned in `data.name`
+        }
+
       } catch (err) {
         console.error("Error fetching contract:", err);
         setError("Failed to load contract data.");
@@ -25,7 +37,7 @@ const Contrato = () => {
     };
 
     fetchContract();
-  }, []);
+  }, [id]);
 
  
 
@@ -40,24 +52,40 @@ const Contrato = () => {
   }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl p-8">
-      <h1 className="text-2xl font-bold mb-4">Contrato</h1>
-      <div className="space-y-4">
-        <p>
-          <strong>Nombre de la Empresa:</strong> {contract.empresa}
-        </p>
-        <p>
-          <strong>Auditor:</strong> {contract.auditor}
-        </p>
-        <p>
-          <strong>Fecha de Creación:</strong> {new Date(contract.dateCreated).toLocaleDateString()}
-        </p>
-        <p>
-          <strong>¿Es Válido?:</strong> {contract.isValid ? "Sí" : "No"}
-        </p>
+    <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl shadow-lg border border-gray-200 w-3/4">
+      <div className="bg-green-600 text-white text-center rounded-t-xl py-4">
+        <h1 className="text-3xl font-extrabold">Contrato</h1>
+      </div>
+      <div className="space-y-6 p-8 text-gray-800">
+        <div className="flex items-center space-x-2">
+          <strong className="text-lg font-semibold text-green-700">
+            Nombre de la Empresa:
+          </strong>
+          <span className="text-xl font-medium">{empresaName}</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <strong className="text-lg font-semibold text-green-700">Auditor:</strong>
+          <span className="text-xl font-medium">{auditorName}</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <strong className="text-lg font-semibold text-green-700">
+            Fecha de Creación:
+          </strong>
+          <span className="text-xl font-medium">
+            {new Date(contract.dateCreated).toLocaleDateString()}
+          </span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <strong className="text-lg font-semibold text-green-700">
+            ¿Es Válido?:
+          </strong>
+          <span className="text-xl font-medium">
+            {contract.isValid ? "Sí" : "No"}
+          </span>
+        </div>
       </div>
     </div>
-  );
+  );  
 };
 
 export default Contrato;

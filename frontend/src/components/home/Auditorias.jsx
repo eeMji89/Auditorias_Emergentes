@@ -5,6 +5,7 @@ import { fetchUserProfile } from "../../api/auth";
 import { getAuditorias } from "../../api/Auditorias";
 import { FaSpinner } from "react-icons/fa";
 import { getEmpresaById } from "../../api/Usuarios";
+import { fetchAuditorById } from "../../api/Usuarios";
 import { getAuditoriabyId } from "../../api/Auditorias";
 
 const AuditoriaTable = () => {
@@ -36,17 +37,13 @@ const AuditoriaTable = () => {
 
           const enhancedAuditorias = await Promise.all(
             rawAuditorias.map(async (auditoria) => {
-              const empresaName = await getEmpresaById(auditoria.ID_Empresa).then(
-                (res) => res.data.name
-              );
-              const auditorName = await getAuditorById(auditoria.ID_Auditor).then(
-                (res) => res.data.name
-              );
+              const empresaName = await getEmpresaById(auditoria.Id_Empresa);
+              const auditorName = await fetchAuditorById(auditoria.ID_Auditor);
 
               return {
                 ...auditoria,
-                EmpresaName: empresaName,
-                AuditorName: auditorName,
+                EmpresaName: empresaName.data.Nombre_Empresa,
+                AuditorName: auditorName.data.Nombre_Auditor,
               };
             })
           );
