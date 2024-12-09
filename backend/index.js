@@ -6,10 +6,31 @@ const multer = require("multer");
 const path = require("path");
 const { MongoClient } = require("mongodb");
 const { ObjectId } = require("mongodb");
+const { ethers } = require("ethers")
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+//Contract
+
+const contractAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"; 
+const contractABI = [
+  {
+    "inputs": [{ "internalType": "bool", "name": "_initialValidity", "type": "bool" }],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  { "inputs": [], "name": "dateCreated", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
+  { "inputs": [], "name": "isValid", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" },
+  { "inputs": [{ "internalType": "bool", "name": "_isValid", "type": "bool" }], "name": "setValidity", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+];
+
+const provider = new ethers.JsonRpcProvider(process.env.RPC_URL); L
+const privateKey = process.env.PRIVATE_KEY; 
+const wallet = new ethers.Wallet(privateKey, provider);
+
+const contract = new ethers.Contract(contractAddress, contractABI, wallet);
 
 // MongoDB Connection
 const mongoUri = process.env.MONGODB_URI;
@@ -853,6 +874,78 @@ app.get("/auditorias/:id", authenticateToken, async (req, res) => {
   } catch (err) {
     console.error("Error al obtener la auditoría:", err);
     res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
+
+app.post("/contratos", authenticateToken, async (req, res) => {
+  const { userId } = req.user; // Get the authenticated user ID
+  const { auditorId, empresaId } = req.body; // IDs for the auditor and empresa
+
+  try {
+    const contract = {
+      dateCreated: new Date(),
+      isValid: true,
+      auditorId,
+      empresaId,
+    };
+
+    const result = await db.collection("contratos").insertOne(contract);
+
+    res.status(201).json({ message: "Contract created successfully", contractId: result.insertedId });
+  } catch (err) {
+    console.error("Error creating contract:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Retrieve All Contracts
+app.get("/contratos", authenticateToken, async (req, res) => {
+  try {
+    const contracts = await db.collection("contratos").find().toArray();
+    res.status(200).json(contracts);
+  } catch (err) {
+    console.error("Error fetching contracts:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Update Contract Validity
+app.put("/contratos/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params; // Contract ID
+  const { isValid } = req.body; // New validity status
+
+  try {
+    const result = await db
+      .collection("contratos")
+      .updateOne({ _id: new ObjectId(id) }, { $set: { isValid } });
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ error: "Contract not found" });
+    }
+
+    res.status(200).json({ message: "Contract updated successfully" });
+  } catch (err) {
+    console.error("Error updating contract:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Retrieve a Contract by ID
+app.get("/contratos/:id", authenticateToken, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const contract = await db.collection("contratos").findOne({ _id: new ObjectId(id) });
+
+    if (!contract) {
+      return res.status(404).json({ error: "Contract not found" });
+    }
+
+    res.status(200).json(contract);
+  } catch (err) {
+    console.error("Error fetching contract by ID:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
