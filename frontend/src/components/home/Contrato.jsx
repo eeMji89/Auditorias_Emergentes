@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 const Contrato = () => {
   const location = useLocation();
   const { contractId, dateCreated, isValid } = location.state || {};
-
+  
   return (
     <div className="p-6 max-w-3xl mx-auto bg-white rounded-xl p-8">
       <h1 className="text-2xl font-bold mb-4">Contrato</h1>

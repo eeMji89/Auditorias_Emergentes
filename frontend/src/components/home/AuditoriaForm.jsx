@@ -19,17 +19,10 @@ const AuditoriaForm = () => {
     Descripcion: "",
     Salario: "",
     Horas_Extra: "",
-    Seguro: "",
-    Vacaciones: "",
     Comentarios: "",
     auditor: solicitud?.AuditorName|| "",
-    fecha: "",
-    descripcion: "", // Updated field
-    salario: "",
-    objetivo: "",
-    horasExtras: "",
-    seguro: false,
-    vacaciones: false,
+    Seguro: false,
+    Vacaciones: false,
     beneficios: [
         { label: "Seguro de Salud", checked: false },
         { label: "Vacaciones Pagadas", checked: false },
@@ -66,6 +59,9 @@ const AuditoriaForm = () => {
     e.preventDefault();
     console.log("Form Data:", formData);
     // Send the formData to the backend
+  };
+  const handleContrato = () => {
+    navigate("/home/auditorias/contrato",formData);
   };
 
   return (
@@ -111,8 +107,8 @@ const AuditoriaForm = () => {
           <div>
             <label className="block font-bold mb-2">Descripción</label> {/* Updated label */}
             <textarea
-              name="descripcion"
-              value={formData.descripcion}
+              name="Descripcion"
+              value={formData.Descripcion}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded"
               placeholder="Describa los detalles de la auditoría"/>
@@ -121,23 +117,21 @@ const AuditoriaForm = () => {
             <label className="block font-bold mb-2">Salario Base</label>
             <input
               type="text"
-              name="salario"
-              value={formData.salario}
+              name="Salario"
+              value={formData.Salario}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded"
               placeholder="Ej. 50000"  />
           </div>
           <div>
             <label className="block font-bold mb-2">Pago de Horas Extras</label>
-            <select
-              name="horasExtras"
-              value={formData.horasExtras}
+            <input
+              type="text"
+              name="Horas_Extra"
+              value={formData.Horas_Extra}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded" >
-              <option value="">Seleccione</option>
-              <option value="Cumple">Cumple</option>
-              <option value="No Cumple">No Cumple</option>
-            </select>
+              className="w-full px-4 py-2 border rounded"
+              placeholder="Ej. 5"  />
           </div>
           <div>
             <label className="block font-bold mb-2">Beneficios Adicionales</label>
@@ -145,16 +139,16 @@ const AuditoriaForm = () => {
               <label>
                 <input
                   type="checkbox"
-                  name="seguro"
-                  checked={formData.seguro}
+                  name="Seguro"
+                  checked={formData.Seguro}
                   onChange={handleChange} />{" "}
                 Seguro de Salud
               </label>
               <label>
                 <input
                   type="checkbox"
-                  name="vacaciones"
-                  checked={formData.vacaciones}
+                  name="Vacaciones"
+                  checked={formData.Vacaciones}
                   onChange={handleChange} />{" "}
                 Vacaciones Pagadas
               </label>
@@ -183,7 +177,7 @@ const AuditoriaForm = () => {
         </div>
         <div className=" flex py-5 items-center justify-center ">
           <button
-            onClick={() => navigate("/contrato")}
+            onClick={handleContrato}
             type="submit"
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
             Verificar Auditoría →

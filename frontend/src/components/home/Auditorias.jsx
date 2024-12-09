@@ -15,9 +15,7 @@ const AuditoriaTable = () => {
 
 
   // Navigate to the form
-  const handleNuevaAuditoria = () => {
-    navigate("/home/auditorias/nueva");
-  };
+  
   useEffect(() => {
     const fetchUserAndAuditorias = async () => {
       try {
@@ -67,7 +65,7 @@ const AuditoriaTable = () => {
   };
 
   return (
-    <div className="p-6 shadow-lg md:w-11/12 w-[360px] mx-auto bg-white rounded-lg overflow-x-auto absolute top-32">
+    <div className="p-6 shadow-lg md:w-11/12 w-[360px] mx-auto bg-white rounded-lg overflow-x-auto ">
       {loading ? (
         <div className="flex justify-center items-center h-64">
           <FaSpinner className="text-4xl text-gray-500 animate-spin" />
@@ -85,14 +83,6 @@ const AuditoriaTable = () => {
                 >
                   <BiTrash className="text-lg" />
                   <span className="font-medium">Borrar</span>
-                </button>
-              )}
-              {!isEmpresa && (
-                <button
-                  onClick={handleNuevaAuditoria}
-                  className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                >
-                  + Nueva Auditoría
                 </button>
               )}
             </div>

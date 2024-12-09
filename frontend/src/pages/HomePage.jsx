@@ -16,6 +16,7 @@ import UserProfile from "../components/home/EditProfile";
 import Notifications from "../components/home/Notifications";
 import SolicitudDetail from "../components/home/DetallesSolicitud";
 import AuditoriaDetail from "../components/home/DetallesAuditoria";
+import Contrato from "../components/home/Contrato";
 const UserPage = () => {
     return (
         <UserLayout>           
@@ -33,7 +34,8 @@ const UserPage = () => {
             <Route path="terminos-condiciones" element={<TerminosCondiciones/>} /> 
             <Route path="soporte-contacto" element={<SoporteContacto/>} /> 
             <Route path="perfilUsuario" element={<UserProfile/>} /> 
-            <Route path="notificaciones" element={<Notifications/>} />       
+            <Route path="notificaciones" element={<Notifications/>} />  
+            <Route path="auditorias/contrato" element={<Contrato />} />     
             </Routes>           
         </UserLayout>
     );
