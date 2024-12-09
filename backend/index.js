@@ -885,7 +885,7 @@ app.post("/contratos", authenticateToken, async (req, res) => {
     auditorId, 
     empresaId,  
     DateCreated,
-    IsValid
+    isValid
   } = req.body; // IDs for the auditor and empresa
 
   try {
@@ -893,12 +893,12 @@ app.post("/contratos", authenticateToken, async (req, res) => {
       auditorId,
       empresaId,
       dateCreated: new Date(),
-      isValid: true,isValid: true,
+      isValid,
     };
 
     const result = await db.collection("contratos").insertOne(contract);
 
-    res.status(201).json({ message: "Contract created successfully", contractId: result.insertedId });
+    res.status(201).json({ message: "Contract created successfully", contractId: result.insertedid });
   } catch (err) {
     console.error("Error creating contract:", err);
     res.status(500).json({ error: "Internal Server Error" });
