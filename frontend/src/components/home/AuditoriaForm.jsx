@@ -16,7 +16,7 @@ const AuditoriaForm = () => {
     ID_Empresa: solicitud?.ID_Empresa || "", 
     empresa: solicitud?.EmpresaName || "",
     Fecha: new Date(solicitud.Fecha).toISOString().split("T")[0],
-    Estatus: "Active", // Default status
+    Estatus: "Active", 
     Descripcion: "",
     Salario: "",
     Horas_Extra: "",
@@ -58,9 +58,7 @@ const AuditoriaForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
-    // Send the formData to the backend
-
+    const response = await createAuditoria(formData); 
     const contractData = {
       empresa: formData.empresa,
       auditor: formData.auditor,
