@@ -16,20 +16,14 @@ const AuditoriaForm = () => {
     ID_Empresa: solicitud?.ID_Empresa || "", 
     Empresa: solicitud?.EmpresaName || "",
     Fecha: new Date(solicitud.Fecha).toISOString().split("T")[0],
-    Estatus: "Active", // Default status
+    Estatus: "Valido", 
     Auditor: solicitud?.AuditorName|| "",
-    Fecha: "",
-    Descripcion: "", // Updated field
+    Descripcion: "", 
     Salario: "",
-    Objetivo: "",
     HorasExtras: "",
-    Seguro: false,
-    Vacaciones: false,
-    beneficios: [
-        { label: "Seguro de Salud", checked: false },
-        { label: "Vacaciones Pagadas", checked: false },
-      ],
-    Documentacion: null,
+    Seguro:{ label: "Seguro de Salud", checked: false },
+    Vacaciones: { label: "Vacaciones Pagadas", checked: false },
+    Comentarios: "",
   });
 
   const handleChange = (e) => {
@@ -40,28 +34,14 @@ const AuditoriaForm = () => {
     }));
   };
 
-  const handleDrop = (acceptedFiles) => {
-    setFormData((prev) => ({
-      ...prev,
-      documentacion: acceptedFiles[0],
-    }));
-  };
-  
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: handleDrop,
-    accept: {
-      "application/pdf": [],
-      "application/vnd.ms-excel": [],
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [],
-    },
-    maxFiles: 1,
-  });
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Form Data:", formData);
     const response = await createAuditoria(formData);
-
+    console.log("Auditoría :", response.data);
+    console.log("Auditoría creada:", response.data);
     // Parse numeric and boolean values
     const salario = parseFloat(formData.Salario);
     const horasExtras = parseInt(formData.HorasExtras, 10);
@@ -78,20 +58,19 @@ const AuditoriaForm = () => {
     const IsValid = conditionCount < 3; 
 
     const contractData = {
-      Empresa: formData.Empresa,
-      Auditor: formData.Auditor,
+      Empresa: formData.ID_Empresa,
+      Auditor: formData.ID_Auditor,
       DateCreated: new Date(),
       Salario: formData.Salario,
       HorasExtras: formData.HorasExtras,
       Seguro: formData.Seguro,
       Vacaciones: formData.Vacaciones,
-      IsValid,
     };
 
     try {
       await createContrato(contractData);
       alert("Contrato creado exitosamente!");
-      navigate("home/contrato", { state: { contractData } });
+      navigate("/contrato", { state: { contractData } });
     } catch (error) {
       console.error("Error al crear el contrato:", error);
       alert("Hubo un error al crear el contrato. Intenta nuevamente.");
@@ -141,7 +120,7 @@ const AuditoriaForm = () => {
           <div>
             <label className="block font-bold mb-2">Descripción</label> {/* Updated label */}
             <textarea
-              name="descripcion"
+              name="Descripcion"
               value={formData.Descripcion}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded"
@@ -151,7 +130,7 @@ const AuditoriaForm = () => {
             <label className="block font-bold mb-2">Salario Base</label>
             <input
               type="text"
-              name="salario"
+              name="Salario"
               value={formData.Salario}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded"
@@ -159,15 +138,13 @@ const AuditoriaForm = () => {
           </div>
           <div>
             <label className="block font-bold mb-2">Pago de Horas Extras</label>
-            <select
-              name="horasExtras"
+            <input
+              type="text"
+              name="HorasExtras"
               value={formData.HorasExtras}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded" >
-              <option value="">Seleccione</option>
-              <option value="Cumple">Cumple</option>
-              <option value="No Cumple">No Cumple</option>
-            </select>
+              className="w-full px-4 py-2 border rounded" 
+              placeholder="Ej. 5"/>
           </div>
           <div>
             <label className="block font-bold mb-2">Beneficios Adicionales</label>
@@ -175,7 +152,7 @@ const AuditoriaForm = () => {
               <label>
                 <input
                   type="checkbox"
-                  name="seguro"
+                  name="Seguro"
                   checked={formData.Seguro}
                   onChange={handleChange} />{" "}
                 Seguro de Salud
@@ -183,7 +160,7 @@ const AuditoriaForm = () => {
               <label>
                 <input
                   type="checkbox"
-                  name="vacaciones"
+                  name="Vacaciones"
                   checked={formData.Vacaciones}
                   onChange={handleChange} />{" "}
                 Vacaciones Pagadas
@@ -192,24 +169,13 @@ const AuditoriaForm = () => {
           </div>
         </div>
         <div>
-          <label className="block font-bold mb-2">Documentación</label>
-          <div
-            {...getRootProps()}
-            className={`border-2 border-dashed rounded px-4 py-12 text-center ${
-              isDragActive ? "border-green-500 bg-green-50" : "border-gray-300"
-            }`}
-          >
-            <input {...getInputProps()} />
-            {formData.Documentacion ? (
-              <p>{formData.Documentacion.name}</p>
-            ) : (
-              <p>
-                {isDragActive
-                  ? "Suelta el archivo aquí..."
-                  : "Arrastra y suelta tu archivo aquí o haz clic para seleccionarlo."}
-              </p>
-            )}
-          </div>
+          <label className="block font-bold mb-2">Comentarios</label>
+          <textarea
+              name="Comentarios"
+              value={formData.Comentarios}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded"
+              placeholder="Comentarios extra respecto a la auditoria"/>
         </div>
         <div className=" flex py-5 items-center justify-center ">
           <button

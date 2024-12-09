@@ -260,7 +260,7 @@ const upload = multer({storage}); // Allow up to 10 files
   
   
 
-  app.put("/update-password",authenticateToken, async (req, res) => {
+  app.put("/updatepassword",authenticateToken, async (req, res) => {
     const { currentPassword, newPassword } = req.body;
   
     try {
@@ -814,17 +814,17 @@ app.post("/auditorias", authenticateToken, async (req, res) => {
       return res.status(400).json({ error: "Faltan campos requeridos" });
     }
 
-    const empresa = await db.collection("empresas").findOne({UsuarioId: new ObjectId(userId)});
+    const empresa = await db.collection("empresas").findOne({_id: new ObjectId(ID_Empresa)});
 
     if (!empresa) {
       return res.status(404).json({ error: "Empresa not found for the logged-in user" });
     }
 
-    const ID_Empresa = empresa._id.toString(); 
+    const Id_Empresa = empresa._id.toString(); 
     
     const result = await db.collection("auditorias").insertOne({
       ID_Auditor,
-      ID_Empresa,
+      Id_Empresa,
       Fecha: new Date(Fecha),
       Estatus,
       Descripcion,

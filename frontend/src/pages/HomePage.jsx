@@ -21,7 +21,7 @@ const UserPage = () => {
     return (
         <UserLayout>           
             <Routes>
-            <Route path="/" element={<Homecontent />} /> {/* Default content */}
+            <Route path="/" element={<SolicitudTable />} /> {/* Default content */}
             <Route path="auditorias" element={<AuditoriaTable />} /> 
             <Route path="auditorias/nueva" element={<AuditoriaForm />} /> 
             <Route path="solicitudes" element={<SolicitudTable />} /> 
@@ -35,7 +35,7 @@ const UserPage = () => {
             <Route path="soporte-contacto" element={<SoporteContacto/>} /> 
             <Route path="perfilUsuario" element={<UserProfile/>} /> 
             <Route path="notificaciones" element={<Notifications/>} />  
-            <Route path="auditorias/contrato" element={<Contrato />} />     
+            <Route path="auditorias/nueva/contrato" element={<Contrato />} />     
             </Routes>           
         </UserLayout>
     );

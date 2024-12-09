@@ -29,6 +29,7 @@ const AuditoriaTable = () => {
         const auditoriasResponse = await getAuditorias();
         if (auditoriasResponse.data.success) {
           setAuditorias(auditoriasResponse.data.data);
+          console.log(auditoriasResponse.data.data);
         } else {
           console.error("Failed to fetch auditorias:", auditoriasResponse);
         }
@@ -103,7 +104,8 @@ const AuditoriaTable = () => {
                     />
                   </th>
                   <th className="border border-gray-300 px-4 py-2">ID de Auditoría</th>
-                  <th className="border border-gray-300 px-4 py-2">Empresa</th>
+                  <th className="border border-gray-300 px-4 py-2">
+                    {isEmpresa?"Auditor":"Empresa"}</th>
                   <th className="border border-gray-300 px-4 py-2">Fecha</th>
                   <th className="border border-gray-300 px-4 py-2">Estatus</th>
                   <th className="border border-gray-300 px-4 py-2">Descripción</th>
@@ -122,11 +124,12 @@ const AuditoriaTable = () => {
                         onChange={() => handleRowSelection(auditoria._id)}
                       />
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 hover:text-brandPrimary cursor-pointer hover:underline">
-                      onClick={() => handleAuditoriaDetails(auditoria._id)}
+                    <td className="border border-gray-300 px-4 py-2 hover:text-brandPrimary cursor-pointer hover:underline"
+                      onClick={() => handleAuditoriaDetails(auditoria._id)}>
                       {auditoria._id}
                       </td>
-                    <td className="border border-gray-300 px-4 py-2">{auditoria.ID_Empresa}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {isEmpresa? auditoria.Id_Auditor:auditoria.Id_Empresa}</td>
                     <td className="border border-gray-300 px-4 py-2">
                       {new Date(auditoria.Fecha).toLocaleDateString()}
                     </td>

@@ -22,5 +22,5 @@ export const fetchUserProfile = () => {
 };
 
 export const updatePassword = (data) => {
-  return api.put("/update-password", data);
+  return api.put("/updatepassword", data);
 };
