@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { useNavigate } from "react-router-dom";
 
 const AuditoriaForm = () => {
   const [formData, setFormData] = useState({
@@ -166,10 +167,11 @@ const AuditoriaForm = () => {
         </div>
         <div className=" flex py-5 items-center justify-center ">
           <button
-          type="submit"
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-          Verificar Auditoría →
-        </button>  
+            onClick={() => navigate("/contrato")}
+            type="submit"
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+            Verificar Auditoría →
+          </button>  
         </div>
         
       </form>

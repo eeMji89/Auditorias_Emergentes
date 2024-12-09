@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Contrato from "./components/home/Contrato";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
     <Route path="/register" element={<RegisterPage />} />
     <Route path="/register/empresa" element={<RegisterPage />} />
     <Route path="/register/auditor" element={<RegisterPage />} />
+    <Route path="/contrato" element={<Contrato />} />
     <Route path="/home/*" element={
        <ProtectedRoute>
        <HomePage />
