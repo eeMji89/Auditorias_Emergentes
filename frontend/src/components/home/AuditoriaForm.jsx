@@ -42,6 +42,12 @@ const AuditoriaForm = () => {
     const response = await createAuditoria(formData);
     console.log("Auditoría :", response.data);
     console.log("Auditoría creada:", response.data);
+
+    if (solicitud?.ID_Solicitud) {
+      await deleteSolicitud(solicitud.ID_Solicitud);
+      console.log("Solicitud deleted successfully");
+    }
+    
     // Parse numeric and boolean values
     const salario = parseFloat(formData.Salario);
     const horasExtras = parseInt(formData.HorasExtras, 10);

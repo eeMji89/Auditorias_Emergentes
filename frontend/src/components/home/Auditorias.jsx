@@ -4,6 +4,8 @@ import { BiTrash } from "react-icons/bi";
 import { fetchUserProfile } from "../../api/auth";
 import { getAuditorias } from "../../api/Auditorias";
 import { FaSpinner } from "react-icons/fa";
+import { getEmpresaById } from "../../api/Usuarios";
+import { getAuditoriabyId } from "../../api/Auditorias";
 
 const AuditoriaTable = () => {
   const navigate = useNavigate();
@@ -30,6 +32,27 @@ const AuditoriaTable = () => {
         if (auditoriasResponse.data.success) {
           setAuditorias(auditoriasResponse.data.data);
           console.log(auditoriasResponse.data.data);
+          const rawAuditorias = auditoriasResponse.data.data;
+
+          const enhancedAuditorias = await Promise.all(
+            rawAuditorias.map(async (auditoria) => {
+              const empresaName = await getEmpresaById(auditoria.ID_Empresa).then(
+                (res) => res.data.name
+              );
+              const auditorName = await getAuditorById(auditoria.ID_Auditor).then(
+                (res) => res.data.name
+              );
+
+              return {
+                ...auditoria,
+                EmpresaName: empresaName,
+                AuditorName: auditorName,
+              };
+            })
+          );
+
+          setAuditorias(enhancedAuditorias);
+
         } else {
           console.error("Failed to fetch auditorias:", auditoriasResponse);
         }
@@ -129,7 +152,8 @@ const AuditoriaTable = () => {
                       {auditoria._id}
                       </td>
                     <td className="border border-gray-300 px-4 py-2">
-                      {isEmpresa? auditoria.Id_Auditor:auditoria.Id_Empresa}</td>
+                      {isEmpresa ? auditoria.AuditorName : auditoria.EmpresaName}
+                    </td>
                     <td className="border border-gray-300 px-4 py-2">
                       {new Date(auditoria.Fecha).toLocaleDateString()}
                     </td>
