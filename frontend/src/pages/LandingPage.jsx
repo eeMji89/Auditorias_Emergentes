@@ -13,7 +13,10 @@ function LandingPage() {
       {/* Main Content */}
       <Inicio />
       <Servicios />
+      <div className="bg-gray-100">
       <ContactForm />
+      </div>
+      
       
       {/* Footer */}
       <Footer />

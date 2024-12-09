@@ -1,3 +1,4 @@
+import { datalist } from "framer-motion/client";
 import api from "./api";
 
 // User Login
@@ -18,4 +19,8 @@ export const logout = () => {
 // Fetch User Profile
 export const fetchUserProfile = () => {
   return api.get("/userauth");
+};
+
+export const updatePassword = (data) => {
+  return api.put("/update-password", data);
 };

@@ -26,7 +26,8 @@ const contractABI = [
   { "inputs": [{ "internalType": "bool", "name": "_isValid", "type": "bool" }], "name": "setValidity", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
 ];
 
-const provider = new ethers.JsonRpcProvider(process.env.RPC_URL); L
+
+const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
 const privateKey = process.env.PRIVATE_KEY; 
 const wallet = new ethers.Wallet(privateKey, provider);
 
@@ -259,8 +260,7 @@ const upload = multer({storage}); // Allow up to 10 files
   
   
 
-  app.put("/update-password/:id", async (req, res) => {
-    const userId = req.params.id; // User ID from the URL parameter
+  app.put("/update-password",authenticateToken, async (req, res) => {
     const { currentPassword, newPassword } = req.body;
   
     try {
@@ -274,7 +274,8 @@ const upload = multer({storage}); // Allow up to 10 files
       }
   
       // Find the user
-      const user = await db.collection("usuarios").findOne({ _id: new MongoClient.ObjectId(userId) });
+      const userId = new ObjectId(req.user.userId); 
+      const user = await db.collection("usuarios").findOne({ _id: userId });
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
@@ -290,7 +291,7 @@ const upload = multer({storage}); // Allow up to 10 files
   
       // Update the password
       await db.collection("usuarios").updateOne(
-        { _id: new MongoClient.ObjectId(userId) },
+        { _id: new ObjectId(userId) },
         { $set: { Contrasena: hashedPassword } }
       );
   
@@ -303,7 +304,7 @@ const upload = multer({storage}); // Allow up to 10 files
   
   
   app.post("/logout", async (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1]; // Extract token from Authorization header
+    const token = req.headers.authorization?.split(" ")[1]; 
     if (!token) {
       return res.status(400).json({ error: "Token missing from request" });
     }

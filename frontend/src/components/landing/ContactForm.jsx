@@ -49,9 +49,9 @@ const ContactForm = () => {
   };
 
   return (
-    <section id= "contacto" className="bg-gray-100 py-16 px-4">
-      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8">
-        <h2 className="text-3xl font-bold text-center mb-8">Contáctanos</h2>
+    <section id= "contacto" className="bg-inherited py-16 px-4">
+      <div className="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8 border">
+        <h2 className="md:text-3xl text-2xl font-bold text-center mb-8 ">Contáctanos</h2>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
             <div>
